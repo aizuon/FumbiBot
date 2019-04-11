@@ -54,7 +54,7 @@ namespace DiscordBot.Modules
             foreach (var theme in Enum.GetValues(typeof(Shop.ProfileTheme)).Cast<Shop.ProfileTheme>().Skip(1).ToArray())
                 embed.AddField(theme.ToString(), theme.GetHashCode(), true);
 
-            await Context.Channel.SendMessageAsync("", false, embed.Build());
+            await ReplyAsync("", false, embed.Build());
         }
 
         [Command("buy")]
@@ -65,14 +65,14 @@ namespace DiscordBot.Modules
 
             if (theme <= 0 || theme > 8)
             {
-                await Context.Channel.SendMessageAsync("Theme not found.");
+                await ReplyAsync("Theme not found.");
                 Logger.Information("H!buy used by {name}({uid}) with unknown theme -> {theme}", Context.User.Username, Context.User.Id, theme);
                 return;
             }
 
             if (user.Pen < 50000)
             {
-                await Context.Channel.SendMessageAsync("Not enough pen.");
+                await ReplyAsync("Not enough pen.");
                 Logger.Information("H!buy used by {name}({uid}) with insufficient pen -> {pen}", Context.User.Username, Context.User.Id, user.Pen);
                 return;
             }
@@ -88,7 +88,7 @@ namespace DiscordBot.Modules
             user.Pen -= 50000;
             user.UpdateUserAsync();
 
-            await Context.Channel.SendMessageAsync("Theme successfully bought!");
+            await ReplyAsync("Theme successfully bought!");
             Logger.Information("H!buy used by {name}({uid}), theme -> {theme}", Context.User.Username, Context.User.Id, i.GetHashCode());
         }
 
@@ -100,7 +100,7 @@ namespace DiscordBot.Modules
 
             if (theme < 0 || theme > 8)
             {
-                await Context.Channel.SendMessageAsync("Theme not found.");
+                await ReplyAsync("Theme not found.");
                 Logger.Information("H!use used by {name}({uid}) with unknown theme -> {theme}", Context.User.Username, Context.User.Id, theme);
                 return;
             }
@@ -111,7 +111,7 @@ namespace DiscordBot.Modules
 
             if (!inventory.CheckInventory(i))
             {
-                await Context.Channel.SendMessageAsync("You dont have that theme.");
+                await ReplyAsync("You dont have that theme.");
                 Logger.Information("H!use used by {name}({uid}) without the theme -> {theme}", Context.User.Username, Context.User.Id, i.GetHashCode());
                 return;
             }
@@ -119,7 +119,7 @@ namespace DiscordBot.Modules
             user.ProfileTheme = (byte)(i.GetHashCode());
             user.UpdateUserAsync();
 
-            await Context.Channel.SendMessageAsync("Theme successfully equipped!");
+            await ReplyAsync("Theme successfully equipped!");
             Logger.Information("H!use used by {name}({uid}), theme -> {theme}", Context.User.Username, Context.User.Id, i.GetHashCode());
         }
 
@@ -129,7 +129,7 @@ namespace DiscordBot.Modules
         {
             if (Context.User.Id != Config.Instance.OwnerId)
             {
-                await Context.Channel.SendMessageAsync("No permission!");
+                await ReplyAsync("No permission!");
                 return;
             }
             Environment.Exit(0);
