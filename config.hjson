@@ -1,0 +1,12 @@
+{
+  bot_token: ""
+  bot_prefix: ""
+  database:
+  {
+    host: localhost
+    username: null
+    password: null
+    database: null
+  }
+  owner: 0
+}
