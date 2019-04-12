@@ -44,6 +44,34 @@ namespace DiscordBot.Modules
             await Context.Channel.SendFileAsync(AppDomain.CurrentDomain.BaseDirectory + "resources\\profiletemp_ " + mention.Id + ".png");
         }
 
+        [Command("rank")]
+        [Cooldown]
+        public async Task RankCommand()
+        {
+            var user = await UserService.FindUser(Context.User.Id, Context.User.Username);
+
+            using (var client = new WebClient())
+                client.DownloadFile(new Uri(Context.User.GetAvatarUrl()),
+                    AppDomain.CurrentDomain.BaseDirectory + "resources\\avatartemp_ " + Context.User.Id + ".png");
+
+            user.DrawRankImage(await UserService.CalculateRankAsync(Context.User.Id));
+            await Context.Channel.SendFileAsync(AppDomain.CurrentDomain.BaseDirectory + "resources\\ranktemp_ " + Context.User.Id + ".png");
+        }
+
+        [Command("rank")]
+        [Cooldown]
+        public async Task RankCommand(IUser mention)
+        {
+            var user = await UserService.FindUser(mention.Id, mention.Username);
+
+            using (var client = new WebClient())
+                client.DownloadFile(new Uri(mention.GetAvatarUrl()),
+                    AppDomain.CurrentDomain.BaseDirectory + "resources\\avatartemp_ " + mention.Id + ".png");
+
+            user.DrawRankImage(await UserService.CalculateRankAsync(mention.Id));
+            await Context.Channel.SendFileAsync(AppDomain.CurrentDomain.BaseDirectory + "resources\\ranktemp_ " + mention.Id + ".png");
+        }
+
         [Command("shop")]
         [Cooldown]
         public async Task ShopCommand()

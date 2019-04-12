@@ -179,6 +179,8 @@ namespace DiscordBot
 
         public void DrawProfileImage(uint rank) => GraphicsHelper.DrawProfileImage(Level, Name, Uid, Exp, Pen, rank, ProfileTheme, CalculateExpBar());
 
+        public void DrawRankImage(uint rank) => GraphicsHelper.DrawRankImage(Level, Name, Uid, rank, ProfileTheme, CalculateExpBar());
+
         public bool HasLeveledUp(uint length)
         {
             byte initalLevel = Level;
