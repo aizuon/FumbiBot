@@ -1,2 +1,2 @@
 # FumbiBot
-C# Discord bot (Discord.NET)
+C# fork of [Fumbibot](https://github.com/xHelixStorm/Azrael)
