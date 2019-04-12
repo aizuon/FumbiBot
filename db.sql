@@ -22,6 +22,8 @@ CREATE TABLE IF NOT EXISTS `inventory` (
   `Lilith` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `Ophelia` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `Pug` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `Hitler` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `Hitler2` tinyint(3) unsigned NOT NULL DEFAULT 0,
   UNIQUE KEY `Uid` (`Uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -34,6 +36,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `Exp` int(10) unsigned NOT NULL DEFAULT 0,
   `Pen` int(10) unsigned NOT NULL DEFAULT 0,
   `ProfileTheme` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `LastDaily` text DEFAULT NULL,
   UNIQUE KEY `Uid` (`Uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
