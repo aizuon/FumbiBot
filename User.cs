@@ -163,13 +163,13 @@ namespace DiscordBot
         public ExpBar CalculateExpBar()
         {
             var expList = Enum.GetValues(typeof(Levels)).Cast<Levels>().ToList();
-            float percentage = (((float)expList[Level + 1] - Exp) / ((float)expList[Level + 1] - (float)expList[Level]));
+            float percentage = (((Exp - (float)expList[Level])) / ((float)expList[Level + 1] - (float)expList[Level]));
 
             var expBar = new ExpBar
             {
-                Percentage = 1 - percentage,
-                CurrentExp = Exp,
-                NextLevelExp = (uint)expList[Level + 1]
+                Percentage = percentage,
+                CurrentExp = Exp - (uint)expList[Level],
+                NextLevelExp = (uint)expList[Level + 1] - (uint)expList[Level]
             };
 
             return expBar;
