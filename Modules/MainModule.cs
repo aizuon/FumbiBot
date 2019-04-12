@@ -92,7 +92,7 @@ namespace DiscordBot.Modules
         {
             var user = await UserService.FindUser(Context.User.Id, Context.User.Username);
 
-            if (theme <= 0 || theme > 8)
+            if (theme <= 0 || theme > 10)
             {
                 await ReplyAsync("Theme not found.");
                 Logger.Information("H!buy used by {name}({uid}) with unknown theme -> {theme}", Context.User.Username, Context.User.Id, theme);
@@ -134,7 +134,7 @@ namespace DiscordBot.Modules
         {
             var user = await UserService.FindUser(Context.User.Id, Context.User.Username);
 
-            if (theme < 0 || theme > 8)
+            if (theme < 0 || theme > 10)
             {
                 await ReplyAsync("Theme not found.");
                 Logger.Information("H!use used by {name}({uid}) with unknown theme -> {theme}", Context.User.Username, Context.User.Id, theme);
@@ -159,12 +159,36 @@ namespace DiscordBot.Modules
             Logger.Information("H!use used by {name}({uid}), theme -> {theme}", Context.User.Username, Context.User.Id, i.GetHashCode());
         }
 
+        [Command("daily")]
+        [Cooldown]
+        public async Task DailyCommand()
+        {
+            var user = await UserService.FindUser(Context.User.Id, Context.User.Username);
+
+            if (user.LastDaily == null || UserService.CheckDaily(DateTime.Parse(user.LastDaily)))
+            {
+                var penGain = UserService.CalculateDaily() * 1000;
+
+                user.Pen += penGain;
+                user.LastDaily = DateTime.Now.ToString();
+                user.UpdateUserAsync();
+
+                user.DrawDailyImage(penGain);
+                await Context.Channel.SendFileAsync(AppDomain.CurrentDomain.BaseDirectory + "resources\\dailytemp_" + Context.User.Id + ".png");
+                return;
+            }
+
+            await ReplyAsync("You can claim your daily in " + (24 - (DateTime.Now - DateTime.Parse(user.LastDaily)).Hours).ToString() + "h");
+            Logger.Information("H!daily used by {name}({uid}) while on cooldown, cooldown left -> {hours} h", Context.User.Username, Context.User.Id, (24 - (DateTime.Now - DateTime.Parse(user.LastDaily)).Hours).ToString());
+        }
+
         [Command("shutdown")]
         [Cooldown]
         public async Task ShutdownCommand()
         {
             if (Context.User.Id != Config.Instance.OwnerId)
             {
+                Logger.Warning("H!shutdown used by {name}({uid}) with no permission.", Context.User.Username, Context.User.Id);
                 await ReplyAsync("No permission!");
                 return;
             }

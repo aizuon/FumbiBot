@@ -26,6 +26,10 @@ namespace DiscordBot
 
         public byte Pug { get; set; }
 
+        public byte Hitler { get; set; }
+
+        public byte Hitler2 { get; set; }
+
         public async void UpdateInventoryAsync() => await InventoryService.UpdateInventoryAsync(this);
 
         public void AddItem(string item) => InventoryService.AddItem(item, this);

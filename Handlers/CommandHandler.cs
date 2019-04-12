@@ -73,6 +73,7 @@ namespace DiscordBot.Handlers
             }
 
             await context.Channel.SendMessageAsync($"Something went wrong -> error: {result}");
+            Logger.Error($"Something went wrong -> error: {result}");
         }
     }
 }

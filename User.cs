@@ -23,6 +23,8 @@ namespace DiscordBot
 
         public byte ProfileTheme { get; set; }
 
+        public string LastDaily { get; set; }
+
         private enum Levels : uint
         {
             Level0 = 0,
@@ -192,6 +194,8 @@ namespace DiscordBot
         public void DrawProfileImage(uint rank) => GraphicsHelper.DrawProfileImage(Level, Name, Uid, Exp, Pen, rank, ProfileTheme, CalculateExpBar());
 
         public void DrawRankImage(uint rank) => GraphicsHelper.DrawRankImage(Level, Name, Uid, rank, ProfileTheme, CalculateExpBar());
+
+        public void DrawDailyImage(uint penGain) => GraphicsHelper.DrawDailyImage(penGain, Uid);
 
         public bool HasLeveledUp(uint length)
         {

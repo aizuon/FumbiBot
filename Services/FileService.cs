@@ -38,7 +38,7 @@ namespace DiscordBot.Services
         private static List<string> FindFiles()
         {
             var files = Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory + "resources", "*.*", SearchOption.AllDirectories)
-                .Where(s => s.Contains("profiletemp") || s.Contains("ranktemp") || s.Contains("leveltemp") || s.Contains("avatartemp"));
+                .Where(s => s.Contains("profiletemp") || s.Contains("ranktemp") || s.Contains("leveltemp") || s.Contains("avatartemp") || s.Contains("dailytemp"));
 
             return files.ToList();
         }

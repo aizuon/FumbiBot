@@ -1,4 +1,5 @@
 ﻿using Dapper.FastCrud;
+using System;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,7 +31,8 @@ namespace DiscordBot.Services
                 Level = 0,
                 Exp = 0,
                 Pen = 0,
-                ProfileTheme = 0
+                ProfileTheme = 0,
+                LastDaily = null
             };
 
             if (!name.All(char.IsLetterOrDigit))
@@ -47,6 +49,21 @@ namespace DiscordBot.Services
             var users = (await Database.GetCurrentConnection().FindAsync<User>()).ToList();
             var rankList = users.OrderByDescending(i => i.Exp).ToList();
             return (uint)rankList.FindIndex(i => i.Uid == uid) + 1;
+        }
+
+        public static bool CheckDaily(DateTime last)
+        {
+            if ((DateTime.Now - last).Days >= 1)
+                return true;
+
+            return false;
+        }
+
+        public static uint CalculateDaily()
+        {
+            var rand = new Random();
+
+            return (uint)rand.Next(10, 50 + 1);
         }
     }
 }

@@ -12,7 +12,9 @@
             Kitty,
             Lilith,
             Ophelia,
-            Pug
+            Pug,
+            Hitler,
+            Hitler2
         }
     }
 }

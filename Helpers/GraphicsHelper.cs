@@ -105,6 +105,26 @@ namespace DiscordBot.Helpers
             expbar.Dispose();
         }
 
+        public static void DrawDailyImage(uint penGain, ulong uid)
+        {
+            var image = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + "resources\\Daily.png");
+            using (var bmp = new Bitmap(1054, 301))
+            {
+                using (var g = Graphics.FromImage(bmp))
+                {
+                    g.DrawImage(image, 0, 0, 1054, 301);
+                    using (var penFont = new Font("Arial", 63, FontStyle.Bold))
+                    {
+                        g.DrawString(penGain.ToString() + " PEN", penFont, Brushes.White, 440, 100);
+                    }
+                }
+
+                bmp.Save(AppDomain.CurrentDomain.BaseDirectory + "resources\\dailytemp_" + uid + ".png");
+            }
+
+            image.Dispose();
+        }
+
         private static SizeF MeasureString(string text, Font font)
         {
             using (var g = Graphics.FromHwnd(IntPtr.Zero))
