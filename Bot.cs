@@ -61,7 +61,7 @@ namespace DiscordBot
 
         private static ServiceProvider ConfigureServices() => new ServiceCollection()
                 .AddSingleton<DiscordSocketClient>()
-                .AddSingleton<CommandService>()
+                .AddSingleton(new CommandService(new CommandServiceConfig { CaseSensitiveCommands = false, DefaultRunMode = RunMode.Async, LogLevel = LogSeverity.Verbose, ThrowOnError = false, IgnoreExtraArgs = false } ))
                 .AddSingleton<CommandHandler>()
                 .BuildServiceProvider();
     }

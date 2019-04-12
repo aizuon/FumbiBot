@@ -11,11 +11,23 @@ namespace DiscordBot.Handlers
 {
     public class Cooldown : PreconditionAttribute
     {
-        private static readonly TimeSpan CooldownLength = TimeSpan.FromSeconds(30);
-        private static readonly bool AdminsAreLimited = false;
+        private TimeSpan CooldownLength;
+        private bool AdminsAreLimited;
         private static readonly ConcurrentDictionary<CooldownInfo, DateTime> _cooldowns = new ConcurrentDictionary<CooldownInfo, DateTime>();
 
         private static readonly ILogger Logger = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Console().CreateLogger().ForContext(Constants.SourceContextPropertyName, nameof(Cooldown));
+
+        public Cooldown()
+        {
+            CooldownLength = TimeSpan.FromSeconds(30);
+            AdminsAreLimited = false;
+        }
+
+        public Cooldown(uint seconds, bool areAdminsLimited)
+        {
+            CooldownLength = TimeSpan.FromSeconds(seconds);
+            AdminsAreLimited = areAdminsLimited;
+        }
 
         public struct CooldownInfo
         {
