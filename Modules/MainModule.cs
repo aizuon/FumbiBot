@@ -80,8 +80,8 @@ namespace DiscordBot.Modules
             var embed = new EmbedBuilder();
             embed.WithDescription("Write H!buy + themes id to buy, each theme is 50k pen");
             embed.WithTitle("Profile theme shop");
-            foreach (byte theme in Enum.GetValues(typeof(Shop.ProfileTheme)).Cast<Shop.ProfileTheme>().Skip(1).ToArray())
-                embed.AddField(theme.ToString(), theme, true);
+            foreach (var theme in Enum.GetValues(typeof(Shop.ProfileTheme)).Cast<Shop.ProfileTheme>().Skip(1).ToArray())
+                embed.AddField(theme.ToString(), theme.GetHashCode(), true);
 
             await ReplyAsync("", false, embed.Build());
         }
@@ -109,6 +109,13 @@ namespace DiscordBot.Modules
             var inventory = await InventoryService.FindInventory(Context.User.Id);
 
             var i = InventoryService.FindTheme(theme);
+
+            if (inventory.CheckInventory(i))
+            {
+                await ReplyAsync("You already have that theme.");
+                Logger.Information("H!buy used by {name}({uid}) with already acquired theme -> ", Context.User.Username, Context.User.Id, i.GetHashCode());
+                return;
+            }
 
             inventory.AddItem(i.ToString());
             inventory.UpdateInventoryAsync();
