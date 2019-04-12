@@ -110,17 +110,17 @@ namespace DiscordBot
 
         public byte CalculateLevel()
         {
-            byte level = 0;
+            int level = -1;
 
-            foreach (var i in Enum.GetValues(typeof(Levels)).Cast<Levels>())
+            foreach (uint i in Enum.GetValues(typeof(Levels)).Cast<Levels>())
             {
-                if (Exp < i.GetHashCode())
+                if (Exp < i)
                     break;
 
                 level++;
             }
 
-            return level;
+            return (byte)level;
         }
 
         public uint CalculatePenGain()
@@ -153,9 +153,31 @@ namespace DiscordBot
                 return 100000;
         }
 
+        public struct ExpBar
+        {
+            public float Percentage { get; set; }
+            public uint CurrentExp { get; set; }
+            public uint NextLevelExp { get; set; }
+        }
+
+        public ExpBar CalculateExpBar()
+        {
+            var expList = Enum.GetValues(typeof(Levels)).Cast<Levels>().ToList();
+            float percentage = (((float)expList[Level + 1] - Exp) / ((float)expList[Level + 1] - (float)expList[Level]));
+
+            var expBar = new ExpBar
+            {
+                Percentage = 1 - percentage,
+                CurrentExp = Exp,
+                NextLevelExp = (uint)expList[Level + 1]
+            };
+
+            return expBar;
+        }
+
         public void DrawLevelUpImage() => GraphicsHelper.DrawLevelUpImage(Level, Name, Uid, ProfileTheme);
 
-        public void DrawProfileImage(uint rank) => GraphicsHelper.DrawProfileImage(Level, Name, Uid, Exp, Pen, rank, ProfileTheme);
+        public void DrawProfileImage(uint rank) => GraphicsHelper.DrawProfileImage(Level, Name, Uid, Exp, Pen, rank, ProfileTheme, CalculateExpBar());
 
         public bool HasLeveledUp(uint length)
         {

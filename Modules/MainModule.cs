@@ -51,8 +51,8 @@ namespace DiscordBot.Modules
             var embed = new EmbedBuilder();
             embed.WithDescription("Write H!buy + themes id to buy, each theme is 50k pen");
             embed.WithTitle("Profile theme shop");
-            foreach (var theme in Enum.GetValues(typeof(Shop.ProfileTheme)).Cast<Shop.ProfileTheme>().Skip(1).ToArray())
-                embed.AddField(theme.ToString(), theme.GetHashCode(), true);
+            foreach (byte theme in Enum.GetValues(typeof(Shop.ProfileTheme)).Cast<Shop.ProfileTheme>().Skip(1).ToArray())
+                embed.AddField(theme.ToString(), theme, true);
 
             await ReplyAsync("", false, embed.Build());
         }
