@@ -30,7 +30,8 @@ namespace DiscordBot.Services
                 foreach (var file in files)
                     File.Delete(file);
 
-                Logger.Information("[FileService] Cleaned {i} files.", files.Count);
+                if (files.Count > 0)
+                    Logger.Information("[FileService] Cleaned {i} files.", files.Count);
             };
         }
 
