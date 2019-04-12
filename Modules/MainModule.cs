@@ -6,6 +6,7 @@ using Serilog;
 using Serilog.Core;
 using System;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -24,10 +25,10 @@ namespace DiscordBot.Modules
 
             using (var client = new WebClient())
                 client.DownloadFile(new Uri(Context.User.GetAvatarUrl()),
-                    AppDomain.CurrentDomain.BaseDirectory + "resources\\avatartemp_ " + Context.User.Id + ".png");
+                    AppDomain.CurrentDomain.BaseDirectory + "resources\\avatartemp_" + Context.User.Id + ".png");
 
             user.DrawProfileImage(await UserService.CalculateRankAsync(Context.User.Id));
-            await Context.Channel.SendFileAsync(AppDomain.CurrentDomain.BaseDirectory + "resources\\profiletemp_ " + Context.User.Id + ".png");
+            await Context.Channel.SendFileAsync(AppDomain.CurrentDomain.BaseDirectory + "resources\\profiletemp_" + Context.User.Id + ".png");
         }
 
         [Command("profile")]
@@ -38,10 +39,10 @@ namespace DiscordBot.Modules
 
             using (var client = new WebClient())
                 client.DownloadFile(new Uri(mention.GetAvatarUrl()),
-                    AppDomain.CurrentDomain.BaseDirectory + "resources\\avatartemp_ " + mention.Id + ".png");
+                    AppDomain.CurrentDomain.BaseDirectory + "resources\\avatartemp_" + mention.Id + ".png");
 
             user.DrawProfileImage(await UserService.CalculateRankAsync(mention.Id));
-            await Context.Channel.SendFileAsync(AppDomain.CurrentDomain.BaseDirectory + "resources\\profiletemp_ " + mention.Id + ".png");
+            await Context.Channel.SendFileAsync(AppDomain.CurrentDomain.BaseDirectory + "resources\\profiletemp_" + mention.Id + ".png");
         }
 
         [Command("rank")]
@@ -52,10 +53,10 @@ namespace DiscordBot.Modules
 
             using (var client = new WebClient())
                 client.DownloadFile(new Uri(Context.User.GetAvatarUrl()),
-                    AppDomain.CurrentDomain.BaseDirectory + "resources\\avatartemp_ " + Context.User.Id + ".png");
+                    AppDomain.CurrentDomain.BaseDirectory + "resources\\avatartemp_" + Context.User.Id + ".png");
 
             user.DrawRankImage(await UserService.CalculateRankAsync(Context.User.Id));
-            await Context.Channel.SendFileAsync(AppDomain.CurrentDomain.BaseDirectory + "resources\\ranktemp_ " + Context.User.Id + ".png");
+            await Context.Channel.SendFileAsync(AppDomain.CurrentDomain.BaseDirectory + "resources\\ranktemp_" + Context.User.Id + ".png");
         }
 
         [Command("rank")]
@@ -66,10 +67,10 @@ namespace DiscordBot.Modules
 
             using (var client = new WebClient())
                 client.DownloadFile(new Uri(mention.GetAvatarUrl()),
-                    AppDomain.CurrentDomain.BaseDirectory + "resources\\avatartemp_ " + mention.Id + ".png");
+                    AppDomain.CurrentDomain.BaseDirectory + "resources\\avatartemp_" + mention.Id + ".png");
 
             user.DrawRankImage(await UserService.CalculateRankAsync(mention.Id));
-            await Context.Channel.SendFileAsync(AppDomain.CurrentDomain.BaseDirectory + "resources\\ranktemp_ " + mention.Id + ".png");
+            await Context.Channel.SendFileAsync(AppDomain.CurrentDomain.BaseDirectory + "resources\\ranktemp_" + mention.Id + ".png");
         }
 
         [Command("shop")]

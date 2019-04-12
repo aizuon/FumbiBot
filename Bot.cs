@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.Handlers;
+using DiscordBot.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Core;
@@ -20,6 +21,8 @@ namespace DiscordBot
         public static void Start(string token)
         {
             s_token = token;
+
+            FileService.StartService();
 
             Database.Open();
 

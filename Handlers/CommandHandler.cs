@@ -45,7 +45,7 @@ namespace DiscordBot.Handlers
                 user.UpdateUserAsync();
 
                 user.DrawLevelUpImage();
-                await message.Channel.SendFileAsync(AppDomain.CurrentDomain.BaseDirectory + "resources\\leveltemp_ " + message.Author.Id + ".png");
+                await message.Channel.SendFileAsync(AppDomain.CurrentDomain.BaseDirectory + "resources\\leveltemp_" + message.Author.Id + ".png");
 
                 Logger.Information("Level up for {name}({uid}), new level -> {newlevel}", message.Author.Username, message.Author.Id, user.Level);
             }
