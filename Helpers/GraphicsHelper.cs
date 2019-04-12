@@ -113,9 +113,9 @@ namespace DiscordBot.Helpers
                 using (var g = Graphics.FromImage(bmp))
                 {
                     g.DrawImage(image, 0, 0, 1054, 301);
-                    using (var penFont = new Font("Arial", 63, FontStyle.Bold))
+                    using (var penFont = new Font("Arial", 50, FontStyle.Bold))
                     {
-                        g.DrawString(penGain.ToString() + " PEN", penFont, Brushes.White, 440, 100);
+                        g.DrawString(penGain.ToString() + " PEN", penFont, Brushes.White, 525, 107);
                     }
                 }
 
