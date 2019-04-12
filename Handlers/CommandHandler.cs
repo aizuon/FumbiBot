@@ -63,12 +63,19 @@ namespace DiscordBot.Handlers
             if (!command.IsSpecified)
             {
                 await context.Channel.SendMessageAsync("Command not found");
+                Logger.Information("Non-existing command {command} used by {name}({uid}).", context.Message.Content, context.User.Username, context.User.Id);
                 return;
             }
 
             if (result.IsSuccess)
             {
                 Logger.Information("{command} used by {name}({uid}).", context.Message.Content, context.User.Username, context.User.Id);
+                return;
+            }
+
+            if (result.Error == CommandError.UnmetPrecondition)
+            {
+                await context.Channel.SendMessageAsync(result.ToString().Substring(19, result.ToString().Length - 19));
                 return;
             }
 
