@@ -23,14 +23,14 @@ namespace DiscordBot.Services
         {
             while (true)
             {
+                Thread.Sleep(30000);
+
                 var files = FindFiles();
 
                 foreach (var file in files)
                     File.Delete(file);
 
                 Logger.Information("[FileService] Cleaned {i} files.", files.Count);
-
-                Thread.Sleep(30000);
             };
         }
 
