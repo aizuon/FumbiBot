@@ -56,10 +56,8 @@ namespace DiscordBot.Handlers
             {
                 var difference = endsAt.Subtract(DateTime.UtcNow);
                 if (difference.Ticks > 0)
-                {
-                    Logger.Warning("Command {command} is on cooldown for {name}({uid}).", command.Name, user.Username, user.Id);
                     return await Task.FromResult(PreconditionResult.FromError($"You can use this command in {difference.ToString(@"mm\:ss")}"));
-                }
+
                 var time = DateTime.UtcNow.Add(CooldownLength);
                 _cooldowns.TryUpdate(key, time, endsAt);
             }

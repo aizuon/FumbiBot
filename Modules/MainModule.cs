@@ -65,7 +65,7 @@ namespace DiscordBot.Modules
         {
             if (Context.User.GetAvatarUrl() == null)
             {
-                await ReplyAsync("User does not have an avatar.");
+                await ReplyAsync("Please set up an avatar first.");
                 Logger.Information("H!rank used by {name}({uid}) with empty avatar", Context.User.Username, Context.User.Id);
                 return;
             }
@@ -218,19 +218,50 @@ namespace DiscordBot.Modules
 
             var embed = new EmbedBuilder();
             embed.WithTitle("Rank list");
+            embed.WithColor(Color.Purple);
 
             uint count = 0;
             foreach (var player in rankList)
             {
                 count++;
 
-                embed.AddField(player.Name, player.Exp, true);
+                embed.AddField("#" + count.ToString() + " " + player.Name, "Exp: " + player.Exp, true);
 
                 if (count == 10)
                     break;
             }
 
             await ReplyAsync("", false, embed.Build());
+        }
+
+        [Command("gamble")]
+        [Cooldown(30, true)]
+        public async Task GambleCommand(uint amount)
+        {
+            var user = await UserService.FindUser(Context.User.Id, Context.User.Username);
+
+            if (amount > user.Pen)
+            {
+                await ReplyAsync("You don't have enough pen.");
+                Logger.Information("H!gamble used by {name}({uid}) with insufficient pen -> {currentPen}({amount})", Context.User.Username, Context.User.Id, user.Pen, amount);
+                return;
+            }
+
+            if (UserService.GambleIsWon() == true)
+            {
+                var multiplier = UserService.GambleCalculateMultiplier();
+
+                user.Pen += amount * multiplier;
+                user.UpdateUserAsync();
+                await ReplyAsync($"Congratz, you have won {amount * multiplier} pen!");
+                Logger.Information("H!gamble won by {name}({uid}) -> {amount} pen", Context.User.Username, Context.User.Id, amount * multiplier);
+                return;
+            }
+
+            user.Pen -= amount;
+            user.UpdateUserAsync();
+            await ReplyAsync("Sadly, you have lost : ^(");
+            Logger.Information("H!gamble lost by {name}({uid}) -> {amount} pen", Context.User.Username, Context.User.Id, user.Pen, amount);
         }
 
         [Command("shutdown")]

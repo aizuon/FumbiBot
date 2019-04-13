@@ -69,12 +69,13 @@ namespace DiscordBot.Handlers
 
             if (result.IsSuccess)
             {
-                Logger.Information("{command} used by {name}({uid}).", context.Message.Content, context.User.Username, context.User.Id);
+                Logger.Information("Command {command} used by {name}({uid}).", context.Message.Content, context.User.Username, context.User.Id);
                 return;
             }
 
             if (result.Error == CommandError.UnmetPrecondition)
             {
+                Logger.Warning("Command {command} is on cooldown for {name}({uid}).", context.Message, context.User.Username, context.User.Id);
                 await context.Channel.SendMessageAsync(result.ToString().Substring(19, result.ToString().Length - 19));
                 return;
             }

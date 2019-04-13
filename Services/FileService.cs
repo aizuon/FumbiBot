@@ -21,17 +21,31 @@ namespace DiscordBot.Services
 
         private static void CleanFiles()
         {
+            uint fails;
+
             while (true)
             {
                 Thread.Sleep(30000);
 
                 var files = FindFiles();
 
+                fails = 0;
+
                 foreach (var file in files)
-                    File.Delete(file);
+                {
+                    try
+                    {
+                        File.Delete(file);
+                    }
+                    catch (IOException)
+                    {
+                        fails++;
+                        Logger.Error("[FileService] Couldn't clean the file {file} (IOException)", file);
+                    }
+                }
 
                 if (files.Count > 0)
-                    Logger.Information("[FileService] Cleaned {i} files.", files.Count);
+                    Logger.Information("[FileService] Cleaned {i} files.", files.Count - fails);
             };
         }
 

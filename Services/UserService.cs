@@ -73,5 +73,23 @@ namespace DiscordBot.Services
 
             return (uint)rand.Next(10, 50 + 1);
         }
+
+        public static bool GambleIsWon()
+        {
+            var rand = new Random();
+
+            return rand.Next(0, 1 + 1) == 1 ? true : false;
+        }
+
+        public static uint GambleCalculateMultiplier()
+        {
+            var rand = new Random();
+
+            var magic = rand.NextDouble();
+
+            var multiplier = Math.Floor(2 + (5 + 1 - 2) * (Math.Pow(magic, 4)));
+
+            return (uint)multiplier;
+        }
     }
 }
