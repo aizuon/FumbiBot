@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DiscordBot.Services;
+using System;
 using System.Drawing;
 
 namespace DiscordBot.Helpers
@@ -29,7 +30,7 @@ namespace DiscordBot.Helpers
             icon.Dispose();
         }
 
-        public static void DrawProfileImage(uint level, string name, ulong uid, uint exp, uint pen, uint rank, byte theme, User.ExpBar expBar)
+        public static void DrawProfileImage(uint level, string name, ulong uid, uint exp, uint pen, uint rank, byte theme, UserService.ExpBar expBar)
         {
             var image = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + "resources\\Profile" + theme + ".png");
             var avatar = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + "resources\\avatartemp_" + uid + ".png");
@@ -70,7 +71,7 @@ namespace DiscordBot.Helpers
             expbar.Dispose();
         }
 
-        public static void DrawRankImage(uint level, string name, ulong uid, uint rank, byte theme, User.ExpBar expBar)
+        public static void DrawRankImage(uint level, string name, ulong uid, uint rank, byte theme, UserService.ExpBar expBar)
         {
             var image = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + "resources\\Rank" + theme + ".png");
             var avatar = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + "resources\\avatartemp_" + uid + ".png");

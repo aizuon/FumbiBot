@@ -40,9 +40,9 @@ namespace DiscordBot.Handlers
 
             var user = await UserService.FindUser(message.Author.Id, message.Author.Username);
 
-            if (user.HasLeveledUp((uint)message.Content.Length))
+            if (await user.OnMessageRecieved((uint)message.Content.Length, message.Author.Username))
             {
-                user.UpdateUserAsync();
+                await user.UpdateUserAsync();
 
                 user.DrawLevelUpImage();
                 await message.Channel.SendFileAsync(AppDomain.CurrentDomain.BaseDirectory + "resources\\leveltemp_" + message.Author.Id + ".png");

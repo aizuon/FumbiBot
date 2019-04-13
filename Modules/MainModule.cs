@@ -149,7 +149,7 @@ namespace DiscordBot.Modules
 
             user.ProfileTheme = (byte)(i.GetHashCode());
             user.Pen -= 50000;
-            user.UpdateUserAsync();
+            await user.UpdateUserAsync();
 
             await ReplyAsync("Theme successfully bought!");
             Logger.Information("H!buy used by {name}({uid}), theme -> {theme}", Context.User.Username, Context.User.Id, i.GetHashCode());
@@ -180,7 +180,7 @@ namespace DiscordBot.Modules
             }
 
             user.ProfileTheme = (byte)(i.GetHashCode());
-            user.UpdateUserAsync();
+            await user.UpdateUserAsync();
 
             await ReplyAsync("Theme successfully equipped!");
             Logger.Information("H!use used by {name}({uid}), theme -> {theme}", Context.User.Username, Context.User.Id, i.GetHashCode());
@@ -198,7 +198,7 @@ namespace DiscordBot.Modules
 
                 user.Pen += penGain;
                 user.LastDaily = DateTime.Now.ToString();
-                user.UpdateUserAsync();
+                await user.UpdateUserAsync();
 
                 user.DrawDailyImage(penGain);
                 await Context.Channel.SendFileAsync(AppDomain.CurrentDomain.BaseDirectory + "resources\\dailytemp_" + Context.User.Id + ".png");
@@ -251,14 +251,14 @@ namespace DiscordBot.Modules
                 uint multiplier = UserService.GambleCalculateMultiplier();
 
                 user.Pen += amount * (multiplier - 1);
-                user.UpdateUserAsync();
+                await user.UpdateUserAsync();
                 await ReplyAsync($"Congratz, you have won {amount * (multiplier - 1)} pen!");
                 Logger.Information("H!gamble won by {name}({uid}) -> {amount} pen", Context.User.Username, Context.User.Id, amount * (multiplier - 1));
                 return;
             }
 
             user.Pen -= amount;
-            user.UpdateUserAsync();
+            await user.UpdateUserAsync();
             await ReplyAsync("Sadly, you have lost : ^(");
             Logger.Information("H!gamble lost by {name}({uid}) -> {amount} pen", Context.User.Username, Context.User.Id, amount);
         }
