@@ -21,6 +21,13 @@ namespace DiscordBot.Modules
         [Cooldown]
         public async Task ProfileCommand()
         {
+            if (Context.User.GetAvatarUrl() == null)
+            {
+                await ReplyAsync("Please set up an avatar first.");
+                Logger.Information("H!profile used by {name}({uid}) with empty avatar", Context.User.Username, Context.User.Id);
+                return;
+            }
+
             var user = await UserService.FindUser(Context.User.Id, Context.User.Username);
 
             using (var client = new WebClient())
@@ -35,6 +42,13 @@ namespace DiscordBot.Modules
         [Cooldown]
         public async Task ProfileCommand(IUser mention)
         {
+            if (mention.GetAvatarUrl() == null)
+            {
+                await ReplyAsync("User does not have an avatar.");
+                Logger.Information("H!profile used by {name}({uid}) with empty avatar(mentioned)", Context.User.Username, Context.User.Id);
+                return;
+            }
+
             var user = await UserService.FindUser(mention.Id, mention.Username);
 
             using (var client = new WebClient())
@@ -49,6 +63,13 @@ namespace DiscordBot.Modules
         [Cooldown]
         public async Task RankCommand()
         {
+            if (Context.User.GetAvatarUrl() == null)
+            {
+                await ReplyAsync("User does not have an avatar.");
+                Logger.Information("H!rank used by {name}({uid}) with empty avatar", Context.User.Username, Context.User.Id);
+                return;
+            }
+
             var user = await UserService.FindUser(Context.User.Id, Context.User.Username);
 
             using (var client = new WebClient())
@@ -63,6 +84,13 @@ namespace DiscordBot.Modules
         [Cooldown]
         public async Task RankCommand(IUser mention)
         {
+            if (mention.GetAvatarUrl() == null)
+            {
+                await ReplyAsync("User does not have an avatar.");
+                Logger.Information("H!rank used by {name}({uid}) with empty avatar(mentioned)", Context.User.Username, Context.User.Id);
+                return;
+            }
+
             var user = await UserService.FindUser(mention.Id, mention.Username);
 
             using (var client = new WebClient())
@@ -160,7 +188,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("daily")]
-        [Cooldown]
+        [Cooldown(60, true)]
         public async Task DailyCommand()
         {
             var user = await UserService.FindUser(Context.User.Id, Context.User.Username);
@@ -180,6 +208,29 @@ namespace DiscordBot.Modules
 
             await ReplyAsync("You can claim your daily in " + (24 - (DateTime.Now - DateTime.Parse(user.LastDaily)).Hours).ToString() + "h");
             Logger.Information("H!daily used by {name}({uid}) while on cooldown, cooldown left -> {hours} h", Context.User.Username, Context.User.Id, (24 - (DateTime.Now - DateTime.Parse(user.LastDaily)).Hours).ToString());
+        }
+
+        [Command("top")]
+        [Cooldown(60, true)]
+        public async Task TopCommand()
+        {
+            var rankList = await UserService.GetTopList();
+
+            var embed = new EmbedBuilder();
+            embed.WithTitle("Rank list");
+
+            uint count = 0;
+            foreach (var player in rankList)
+            {
+                count++;
+
+                embed.AddField(player.Name, player.Exp, true);
+
+                if (count == 10)
+                    break;
+            }
+
+            await ReplyAsync("", false, embed.Build());
         }
 
         [Command("shutdown")]

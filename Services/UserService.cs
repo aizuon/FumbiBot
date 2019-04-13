@@ -1,5 +1,6 @@
 ﻿using Dapper.FastCrud;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -49,6 +50,13 @@ namespace DiscordBot.Services
             var users = (await Database.GetCurrentConnection().FindAsync<User>()).ToList();
             var rankList = users.OrderByDescending(i => i.Exp).ToList();
             return (uint)rankList.FindIndex(i => i.Uid == uid) + 1;
+        }
+
+        public static async Task<List<User>> GetTopList()
+        {
+            var users = (await Database.GetCurrentConnection().FindAsync<User>()).ToList();
+            var rankList = users.OrderByDescending(i => i.Exp).ToList();
+            return rankList;
         }
 
         public static bool CheckDaily(DateTime last)
