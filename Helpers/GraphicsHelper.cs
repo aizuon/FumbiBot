@@ -57,7 +57,7 @@ namespace DiscordBot.Helpers
                     }
                     using (var nameFont = new Font("Arial", 18, FontStyle.Bold))
                     {
-                        g.DrawString(name, nameFont, Brushes.White, 128, 33);
+                        g.DrawString(name, nameFont, Brushes.White, 125, 33);
                     }
                 }
 
@@ -92,7 +92,7 @@ namespace DiscordBot.Helpers
                     }
                     using (var nameFont = new Font("Arial", 18, FontStyle.Bold))
                     {
-                        g.DrawString(name, nameFont, Brushes.White, 115, 20);
+                        g.DrawString(name, nameFont, Brushes.White, 111, 20);
                     }
                 }
 
@@ -115,7 +115,7 @@ namespace DiscordBot.Helpers
                     g.DrawImage(image, 0, 0, 1054, 301);
                     using (var penFont = new Font("Arial", 50, FontStyle.Bold))
                     {
-                        g.DrawString(penGain.ToString() + " PEN", penFont, Brushes.White, 525, 107);
+                        g.DrawString(penGain.ToString() + " PEN", penFont, Brushes.White, 525, 140);
                     }
                 }
 
