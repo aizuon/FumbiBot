@@ -251,17 +251,17 @@ namespace DiscordBot.Modules
             {
                 var multiplier = UserService.GambleCalculateMultiplier();
 
-                user.Pen += amount * multiplier;
+                user.Pen += amount * (multiplier - 1);
                 user.UpdateUserAsync();
-                await ReplyAsync($"Congratz, you have won {amount * multiplier} pen!");
-                Logger.Information("H!gamble won by {name}({uid}) -> {amount} pen", Context.User.Username, Context.User.Id, amount * multiplier);
+                await ReplyAsync($"Congratz, you have won {amount * (multiplier - 1)} pen!");
+                Logger.Information("H!gamble won by {name}({uid}) -> {amount} pen", Context.User.Username, Context.User.Id, amount * (multiplier - 1));
                 return;
             }
 
             user.Pen -= amount;
             user.UpdateUserAsync();
             await ReplyAsync("Sadly, you have lost : ^(");
-            Logger.Information("H!gamble lost by {name}({uid}) -> {amount} pen", Context.User.Username, Context.User.Id, user.Pen, amount);
+            Logger.Information("H!gamble lost by {name}({uid}) -> {amount} pen", Context.User.Username, Context.User.Id, amount);
         }
 
         [Command("shutdown")]
