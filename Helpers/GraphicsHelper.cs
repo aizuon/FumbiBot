@@ -88,7 +88,8 @@ namespace DiscordBot.Helpers
                     {
                         g.DrawString("Rank: #" + rank.ToString(), bottomFont, Brushes.White, 115, 47);
                         g.DrawString(((uint)(expBar.Percentage * 100)).ToString() + "%", bottomFont, Brushes.White, 270 - MeasureString(((uint)(expBar.Percentage * 100)).ToString() + "%", bottomFont).Width, 61);
-                        g.DrawString("Exp:", bottomFont, Brushes.White, 13, 61);
+                        if (theme != 0)
+                            g.DrawString("Exp:", bottomFont, Brushes.White, 13, 61);
                     }
                     using (var nameFont = new Font("Arial", 18, FontStyle.Bold))
                     {
