@@ -1,8 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Serilog;
-using Serilog.Core;
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
@@ -11,11 +9,9 @@ namespace DiscordBot.Handlers
 {
     public class Cooldown : PreconditionAttribute
     {
-        private TimeSpan CooldownLength;
-        private bool AdminsAreLimited;
+        public TimeSpan CooldownLength;
+        public bool AdminsAreLimited;
         private static readonly ConcurrentDictionary<CooldownInfo, DateTime> _cooldowns = new ConcurrentDictionary<CooldownInfo, DateTime>();
-
-        private static readonly ILogger Logger = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Console().CreateLogger().ForContext(Constants.SourceContextPropertyName, nameof(Cooldown));
 
         public Cooldown()
         {

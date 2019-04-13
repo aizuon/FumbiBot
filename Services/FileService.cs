@@ -31,7 +31,7 @@ namespace DiscordBot.Services
 
                 fails = 0;
 
-                foreach (var file in files)
+                foreach (string file in files)
                 {
                     try
                     {

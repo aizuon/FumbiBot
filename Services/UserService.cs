@@ -85,9 +85,9 @@ namespace DiscordBot.Services
         {
             var rand = new Random();
 
-            var magic = rand.NextDouble();
+            double magic = rand.NextDouble();
 
-            var multiplier = Math.Floor(2 + (5 + 1 - 2) * (Math.Pow(magic, 4)));
+            double multiplier = Math.Floor(2 + (5 + 1 - 2) * (Math.Pow(magic, 4)));
 
             return (uint)multiplier;
         }

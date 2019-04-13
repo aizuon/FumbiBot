@@ -6,7 +6,6 @@ using Serilog;
 using Serilog.Core;
 using System;
 using System.Data;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -195,7 +194,7 @@ namespace DiscordBot.Modules
 
             if (user.LastDaily == null || UserService.CheckDaily(DateTime.Parse(user.LastDaily)))
             {
-                var penGain = UserService.CalculateDaily() * 1000;
+                uint penGain = UserService.CalculateDaily() * 1000;
 
                 user.Pen += penGain;
                 user.LastDaily = DateTime.Now.ToString();
@@ -249,7 +248,7 @@ namespace DiscordBot.Modules
 
             if (UserService.GambleIsWon() == true)
             {
-                var multiplier = UserService.GambleCalculateMultiplier();
+                uint multiplier = UserService.GambleCalculateMultiplier();
 
                 user.Pen += amount * (multiplier - 1);
                 user.UpdateUserAsync();
