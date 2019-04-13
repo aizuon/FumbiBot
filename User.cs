@@ -32,7 +32,7 @@ namespace DiscordBot
 
         public void DrawDailyImage(uint penGain) => GraphicsHelper.DrawDailyImage(penGain, Uid);
 
-        public async Task<bool> OnMessageRecieved(uint length, string name) => await UserService.OnMessageRecieved(length, name, this);
+        public async Task<bool> OnMessageRecievedAsync(uint length, string name) => await UserService.OnMessageRecievedAsync(length, name, this);
 
         public async Task<bool> UpdateUserAsync() => await UserService.UpdateUserAsync(this);
     }

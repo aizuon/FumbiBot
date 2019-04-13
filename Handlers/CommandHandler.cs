@@ -40,7 +40,7 @@ namespace DiscordBot.Handlers
 
             var user = await UserService.FindUserAsync(message.Author.Id, message.Author.Username);
 
-            if (await user.OnMessageRecieved((uint)message.Content.Length, message.Author.Username))
+            if (await user.OnMessageRecievedAsync((uint)message.Content.Length, message.Author.Username))
             {
                 await user.UpdateUserAsync();
 

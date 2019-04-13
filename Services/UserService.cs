@@ -256,7 +256,7 @@ namespace DiscordBot.Services
                 return 100000;
         }
 
-        public static async Task<bool> OnMessageRecieved(uint length, string name, User user)
+        public static async Task<bool> OnMessageRecievedAsync(uint length, string name, User user)
         {
             byte initalLevel = user.Level;
             user.Exp += (length * 7) % 300;
