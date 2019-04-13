@@ -38,7 +38,7 @@ namespace DiscordBot.Handlers
                 message.Author.IsBot || message.Channel.GetType() == typeof(SocketDMChannel))
                 return;
 
-            var user = await UserService.FindUser(message.Author.Id, message.Author.Username);
+            var user = await UserService.FindUserAsync(message.Author.Id, message.Author.Username);
 
             if (await user.OnMessageRecieved((uint)message.Content.Length, message.Author.Username))
             {

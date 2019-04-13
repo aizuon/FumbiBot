@@ -27,7 +27,7 @@ namespace DiscordBot.Modules
                 return;
             }
 
-            var user = await UserService.FindUser(Context.User.Id, Context.User.Username);
+            var user = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
 
             using (var client = new WebClient())
                 client.DownloadFile(new Uri(Context.User.GetAvatarUrl()),
@@ -48,7 +48,7 @@ namespace DiscordBot.Modules
                 return;
             }
 
-            var user = await UserService.FindUser(mention.Id, mention.Username);
+            var user = await UserService.FindUserAsync(mention.Id, mention.Username);
 
             using (var client = new WebClient())
                 client.DownloadFile(new Uri(mention.GetAvatarUrl()),
@@ -69,7 +69,7 @@ namespace DiscordBot.Modules
                 return;
             }
 
-            var user = await UserService.FindUser(Context.User.Id, Context.User.Username);
+            var user = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
 
             using (var client = new WebClient())
                 client.DownloadFile(new Uri(Context.User.GetAvatarUrl()),
@@ -90,7 +90,7 @@ namespace DiscordBot.Modules
                 return;
             }
 
-            var user = await UserService.FindUser(mention.Id, mention.Username);
+            var user = await UserService.FindUserAsync(mention.Id, mention.Username);
 
             using (var client = new WebClient())
                 client.DownloadFile(new Uri(mention.GetAvatarUrl()),
@@ -117,7 +117,7 @@ namespace DiscordBot.Modules
         [Cooldown]
         public async Task BuyCommand(byte theme)
         {
-            var user = await UserService.FindUser(Context.User.Id, Context.User.Username);
+            var user = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
 
             if (theme <= 0 || theme > 10)
             {
@@ -159,7 +159,7 @@ namespace DiscordBot.Modules
         [Cooldown]
         public async Task UseCommand(byte theme)
         {
-            var user = await UserService.FindUser(Context.User.Id, Context.User.Username);
+            var user = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
 
             if (theme < 0 || theme > 10)
             {
@@ -190,7 +190,7 @@ namespace DiscordBot.Modules
         [Cooldown(60, true)]
         public async Task DailyCommand()
         {
-            var user = await UserService.FindUser(Context.User.Id, Context.User.Username);
+            var user = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
 
             if (user.LastDaily == null || UserService.CheckDaily(DateTime.Parse(user.LastDaily)))
             {
@@ -237,7 +237,7 @@ namespace DiscordBot.Modules
         [Cooldown(30, true)]
         public async Task GambleCommand(uint amount)
         {
-            var user = await UserService.FindUser(Context.User.Id, Context.User.Username);
+            var user = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
 
             if (amount > user.Pen)
             {

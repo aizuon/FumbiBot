@@ -11,7 +11,7 @@ namespace DiscordBot.Services
     {
         private static IDbConnection _connection => Database.GetCurrentConnection();
 
-        public static async Task<User> FindUser(ulong uid, string name)
+        public static async Task<User> FindUserAsync(ulong uid, string name)
         {
             var user = (await _connection.FindAsync<User>(statement => statement
                 .Where($"{nameof(User.Uid):C} = @Uid")
