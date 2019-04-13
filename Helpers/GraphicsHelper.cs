@@ -18,7 +18,7 @@ namespace DiscordBot.Helpers
                     using (var arialFont = new Font("Arial", 21, FontStyle.Bold))
                     {
                         g.DrawString(level.ToString(), arialFont, Brushes.White, 87, 43);
-                        g.DrawString(name, arialFont, Brushes.White, 137, 45);
+                        g.DrawString(name, arialFont, Brushes.White, 133, 45);
                     }
                 }
 
