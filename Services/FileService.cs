@@ -44,7 +44,7 @@ namespace DiscordBot.Services
                     }
                 }
 
-                if (files.Count > 0)
+                if (files.Count - fails > 0)
                     Logger.Information("[FileService] Cleaned {i} files.", files.Count - fails);
             };
         }
