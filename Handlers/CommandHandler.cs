@@ -13,9 +13,9 @@ namespace DiscordBot.Handlers
 {
     public class CommandHandler
     {
-        private readonly CommandService _commands;
-        private readonly DiscordSocketClient _client;
-        private readonly IServiceProvider _services;
+        private static CommandService _commands;
+        private static DiscordSocketClient _client;
+        private static IServiceProvider _services;
 
         private static readonly ILogger Logger = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Console().CreateLogger().ForContext(Constants.SourceContextPropertyName, nameof(CommandHandler));
 
@@ -32,7 +32,7 @@ namespace DiscordBot.Handlers
 
         public async Task InitializeAsync() => await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
 
-        private async Task MessageReceivedAsync(SocketMessage rawMessage)
+        private static async Task MessageReceivedAsync(SocketMessage rawMessage)
         {
             if (!(rawMessage is SocketUserMessage message) || message.Author.Id == _client.CurrentUser.Id ||
                 message.Author.IsBot || message.Channel.GetType() == typeof(SocketDMChannel))
@@ -58,7 +58,7 @@ namespace DiscordBot.Handlers
             await _commands.ExecuteAsync(context, argPos, _services);
         }
 
-        public async Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result)
+        private static async Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result)
         {
             if (!command.IsSpecified)
             {
