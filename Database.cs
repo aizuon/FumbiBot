@@ -11,7 +11,7 @@ namespace DiscordBot
         private static IDbConnection _connection;
         private static string s_connectionString;
 
-        private static readonly ILogger Logger = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Console().CreateLogger().ForContext(Constants.SourceContextPropertyName, nameof(Database));
+        private static readonly ILogger Logger = Log.ForContext(Constants.SourceContextPropertyName, nameof(Database));
 
         private static void Initialize()
         {
@@ -28,12 +28,15 @@ namespace DiscordBot
 
         public static IDbConnection Open()
         {
+            Logger.Information("Connecting to the database...");
+
             if (_connection == null)
                 Initialize();
 
             try
             {
                 _connection.Open();
+                Logger.Information("Successfully connected to the database!");
                 return _connection;
             }
             catch (MySqlException ex)
@@ -41,7 +44,7 @@ namespace DiscordBot
                 switch (ex.Number)
                 {
                     case 0:
-                        Logger.Error("Cannot connect to server.");
+                        Logger.Error("Cannot connect to the database.");
                         break;
 
                     case 1045:

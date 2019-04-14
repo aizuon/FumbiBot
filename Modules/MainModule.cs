@@ -14,7 +14,7 @@ namespace DiscordBot.Modules
 {
     public class MainModule : ModuleBase<SocketCommandContext>
     {
-        private static readonly ILogger Logger = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Console().CreateLogger().ForContext(Constants.SourceContextPropertyName, nameof(MainModule));
+        private static readonly ILogger Logger = Log.ForContext(Constants.SourceContextPropertyName, nameof(MainModule));
 
         [Command("profile")]
         [Cooldown]
@@ -152,7 +152,6 @@ namespace DiscordBot.Modules
             await user.UpdateUserAsync();
 
             await ReplyAsync("Theme successfully bought!");
-            Logger.Information("H!buy used by {name}({uid}), theme -> {theme}", Context.User.Username, Context.User.Id, i.GetHashCode());
         }
 
         [Command("use")]
@@ -183,7 +182,6 @@ namespace DiscordBot.Modules
             await user.UpdateUserAsync();
 
             await ReplyAsync("Theme successfully equipped!");
-            Logger.Information("H!use used by {name}({uid}), theme -> {theme}", Context.User.Username, Context.User.Id, i.GetHashCode());
         }
 
         [Command("daily")]

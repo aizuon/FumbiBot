@@ -17,7 +17,7 @@ namespace DiscordBot.Handlers
         private static DiscordSocketClient _client;
         private static IServiceProvider _services;
 
-        private static readonly ILogger Logger = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Console().CreateLogger().ForContext(Constants.SourceContextPropertyName, nameof(CommandHandler));
+        private static readonly ILogger Logger = Log.ForContext(Constants.SourceContextPropertyName, nameof(CommandHandler));
 
         public CommandHandler(IServiceProvider services)
         {

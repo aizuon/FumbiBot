@@ -10,7 +10,7 @@ namespace DiscordBot.Services
 {
     public static class FileService
     {
-        private static readonly ILogger Logger = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Console().CreateLogger().ForContext(Constants.SourceContextPropertyName, nameof(FileService));
+        private static readonly ILogger Logger = Log.ForContext(Constants.SourceContextPropertyName, nameof(FileService));
 
         public static void StartService()
         {
@@ -40,12 +40,12 @@ namespace DiscordBot.Services
                     catch (IOException)
                     {
                         fails++;
-                        Logger.Error("[FileService] Couldn't clean the file {file} (IOException)", file);
+                        Logger.Error("Couldn't clean the file {file} (IOException)", file);
                     }
                 }
 
                 if (files.Count - fails > 0)
-                    Logger.Information("[FileService] Cleaned {i} files.", files.Count - fails);
+                    Logger.Information("Cleaned {i} files.", files.Count - fails);
             };
         }
 

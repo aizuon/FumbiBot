@@ -16,7 +16,7 @@ namespace DiscordBot
         private static string s_token;
         private static ServiceProvider _services;
 
-        private static readonly ILogger Logger = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Console().CreateLogger().ForContext(Constants.SourceContextPropertyName, nameof(Discord));
+        private static readonly ILogger Logger = Log.ForContext(Constants.SourceContextPropertyName, nameof(Bot));
 
         public static void Start(string token)
         {
@@ -50,14 +50,35 @@ namespace DiscordBot
 
         private static Task LogAsync(LogMessage log)
         {
-            Logger.Debug(log.ToString());
+            if (log.Message.StartsWith("Executed"))
+                return Task.CompletedTask;
+
+            switch (log.Severity)
+            {
+                case LogSeverity.Critical:
+                case LogSeverity.Error:
+                    Logger.Error(log.Message);
+                    break;
+
+                case LogSeverity.Warning:
+                    Logger.Warning(log.Message);
+                    break;
+
+                case LogSeverity.Debug:
+                    Logger.Debug(log.Message);
+                    break;
+
+                default:
+                    Logger.Information(log.Message);
+                    break;
+            }
 
             return Task.CompletedTask;
         }
 
         private static Task ReadyAsync()
         {
-            Logger.Debug($"{_client.CurrentUser} is connected!");
+            Logger.Information($"{_client.CurrentUser} is connected!");
 
             return Task.CompletedTask;
         }
