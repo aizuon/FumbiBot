@@ -258,11 +258,11 @@ namespace DiscordBot.Services
 
         public static async Task<bool> OnMessageRecievedAsync(uint length, string name, User user)
         {
-            byte initalLevel = user.Level;
-            user.Exp += (length * 7) % 300;
-            byte newLevel = CalculateLevel(user.Exp);
-
             UpdateUsername(name, user);
+
+            byte initalLevel = user.Level;
+            user.Exp += (length * 7 > 300) ? 300 : (length * 7);
+            byte newLevel = CalculateLevel(user.Exp);
 
             if (newLevel != initalLevel)
             {
