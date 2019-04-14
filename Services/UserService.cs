@@ -266,8 +266,8 @@ namespace DiscordBot.Services
 
             if (newLevel != initalLevel)
             {
-                user.Pen += CalculatePenGain(user.Level);
                 user.Level = newLevel;
+                user.Pen += CalculatePenGain(user.Level);
 
                 return true;
             }
