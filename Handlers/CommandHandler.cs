@@ -79,6 +79,7 @@ namespace DiscordBot.Handlers
 
                 case CommandError.BadArgCount:
                 case CommandError.ParseFailed:
+                    Logger.Information("{name}({uid}) used a command wrong -> .", context.User.Username, context.User.Id, context.Message.Content);
                     await context.Channel.SendMessageAsync("Wrong usage.");
                     break;
 
