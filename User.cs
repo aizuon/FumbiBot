@@ -2,6 +2,7 @@
 using DiscordBot.Services;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace DiscordBot
@@ -24,13 +25,13 @@ namespace DiscordBot
 
         public string LastDaily { get; set; }
 
-        public void DrawLevelUpImage() => GraphicsHelper.DrawLevelUpImage(Level, Name, Uid, ProfileTheme);
+        public MemoryStream DrawLevelUpImage() => GraphicsHelper.DrawLevelUpImage(Level, Name, ProfileTheme);
 
-        public void DrawProfileImage(uint rank) => GraphicsHelper.DrawProfileImage(Level, Name, Uid, Exp, Pen, rank, ProfileTheme, UserService.CalculateExpBar(Level, Exp));
+        public async Task<MemoryStream> DrawProfileImageAsync(uint rank, string avatarUrl) => await GraphicsHelper.DrawProfileImageAsync(Level, Name, Exp, Pen, rank, ProfileTheme, UserService.CalculateExpBar(Level, Exp), avatarUrl);
 
-        public void DrawRankImage(uint rank) => GraphicsHelper.DrawRankImage(Level, Name, Uid, rank, ProfileTheme, UserService.CalculateExpBar(Level, Exp));
+        public async Task<MemoryStream> DrawRankImageAsync(uint rank, string avatarUrl) => await GraphicsHelper.DrawRankImageAsync(Level, Name, rank, ProfileTheme, UserService.CalculateExpBar(Level, Exp), avatarUrl);
 
-        public void DrawDailyImage(uint penGain) => GraphicsHelper.DrawDailyImage(penGain, Uid);
+        public MemoryStream DrawDailyImage(uint penGain) => GraphicsHelper.DrawDailyImage(penGain);
 
         public async Task<bool> OnMessageRecievedAsync(uint length, string name) => await UserService.OnMessageRecievedAsync(length, name, this);
 

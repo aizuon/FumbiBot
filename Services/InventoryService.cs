@@ -42,7 +42,7 @@ namespace DiscordBot.Services
             return newInventory;
         }
 
-        public static async Task<bool> UpdateInventoryAsync(Inventory inventory) { return await _connection.UpdateAsync(inventory); }
+        public static async Task<bool> UpdateInventoryAsync(Inventory inventory) => await _connection.UpdateAsync(inventory);
 
         public static bool CheckInventory(Shop.ProfileTheme theme, Inventory inventory)
         {

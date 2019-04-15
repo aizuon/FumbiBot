@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using DiscordBot.Helpers;
+using Serilog;
 
 namespace DiscordBot
 {
@@ -10,7 +11,13 @@ namespace DiscordBot
                 .WriteTo.Async(w => w.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3} {SourceContext}] {Message:lj}{NewLine}{Exception}"), bufferSize: 1000, blockWhenFull: true)
                 .CreateLogger();
 
+            Database.Open();
+
             Bot.Start(Config.Instance.BotToken);
+
+            Database.Close();
+
+            ImageCache.Dispose();
 
             Log.CloseAndFlush();
         }

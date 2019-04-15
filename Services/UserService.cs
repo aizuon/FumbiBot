@@ -43,7 +43,7 @@ namespace DiscordBot.Services
             return newUser;
         }
 
-        public static async Task<bool> UpdateUserAsync(User user) { return await _connection.UpdateAsync(user); }
+        public static async Task<bool> UpdateUserAsync(User user) => await _connection.UpdateAsync(user);
 
         public static async Task<uint> CalculateRankAsync(ulong uid)
         {

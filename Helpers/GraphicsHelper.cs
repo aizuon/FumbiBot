@@ -1,20 +1,23 @@
 ﻿using DiscordBot.Services;
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace DiscordBot.Helpers
 {
     public static class GraphicsHelper
     {
-        public static void DrawLevelUpImage(uint level, string name, ulong uid, byte theme)
+        public static MemoryStream DrawLevelUpImage(uint level, string name, byte theme)
         {
-            var image = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + "resources\\LevelUp" + theme + ".png");
-            var icon = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + "resources\\Level" + level.ToString() + ".png");
-            using (var bmp = new Bitmap(285, 96))
+            var image = ImageCache.GetOrAdd(AppDomain.CurrentDomain.BaseDirectory + "resources\\LevelUp" + theme + ".png");
+            var icon = ImageCache.GetOrAdd(AppDomain.CurrentDomain.BaseDirectory + "resources\\Level" + level.ToString() + ".png");
+            using (var bmp = new Bitmap(image, 285, 96))
             {
                 using (var g = Graphics.FromImage(bmp))
                 {
-                    g.DrawImage(image, 0, 0, 285, 96);
                     g.DrawImage(icon, 23, 23, 50, 50);
                     using (var arialFont = new Font("Arial", 21, FontStyle.Bold))
                     {
@@ -23,24 +26,20 @@ namespace DiscordBot.Helpers
                     }
                 }
 
-                bmp.Save(AppDomain.CurrentDomain.BaseDirectory + "resources\\leveltemp_" + uid + ".png");
+                return bmp.ToStream();
             }
-
-            image.Dispose();
-            icon.Dispose();
         }
 
-        public static void DrawProfileImage(uint level, string name, ulong uid, uint exp, uint pen, uint rank, byte theme, UserService.ExpBar expBar)
+        public static async Task<MemoryStream> DrawProfileImageAsync(uint level, string name, uint exp, uint pen, uint rank, byte theme, UserService.ExpBar expBar, string avatarUrl)
         {
-            var image = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + "resources\\Profile" + theme + ".png");
-            var avatar = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + "resources\\avatartemp_" + uid + ".png");
-            var icon = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + "resources\\Level" + level.ToString() + ".png");
-            var expbar = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + "resources\\ExpBar" + theme + ".png");
-            using (var bmp = new Bitmap(285, 192))
+            var image = ImageCache.GetOrAdd(AppDomain.CurrentDomain.BaseDirectory + "resources\\Profile" + theme + ".png");
+            var avatar = await GetAvatarAsync(avatarUrl);
+            var icon = ImageCache.GetOrAdd(AppDomain.CurrentDomain.BaseDirectory + "resources\\Level" + level.ToString() + ".png");
+            var expbar = ImageCache.GetOrAdd(AppDomain.CurrentDomain.BaseDirectory + "resources\\ExpBar" + theme + ".png");
+            using (var bmp = new Bitmap(image, 285, 192))
             {
                 using (var g = Graphics.FromImage(bmp))
                 {
-                    g.DrawImage(image, 0, 0, 285, 192);
                     g.DrawImage(avatar, 20, 20, 55, 55);
                     g.DrawImage(icon, 89, 35, 26, 26);
                     g.DrawImage(expbar, 42, 100, 200 * expBar.Percentage, 11);
@@ -62,26 +61,22 @@ namespace DiscordBot.Helpers
                     }
                 }
 
-                bmp.Save(AppDomain.CurrentDomain.BaseDirectory + "resources\\profiletemp_" + uid + ".png");
-            }
+                avatar.Dispose();
 
-            image.Dispose();
-            avatar.Dispose();
-            icon.Dispose();
-            expbar.Dispose();
+                return bmp.ToStream();
+            }
         }
 
-        public static void DrawRankImage(uint level, string name, ulong uid, uint rank, byte theme, UserService.ExpBar expBar)
+        public static async Task<MemoryStream> DrawRankImageAsync(uint level, string name, uint rank, byte theme, UserService.ExpBar expBar, string avatarUrl)
         {
-            var image = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + "resources\\Rank" + theme + ".png");
-            var avatar = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + "resources\\avatartemp_" + uid + ".png");
-            var icon = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + "resources\\Level" + level.ToString() + ".png");
-            var expbar = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + "resources\\ExpBar" + theme + ".png");
-            using (var bmp = new Bitmap(285, 96))
+            var image = ImageCache.GetOrAdd(AppDomain.CurrentDomain.BaseDirectory + "resources\\Rank" + theme + ".png");
+            var avatar = await GetAvatarAsync(avatarUrl);
+            var icon = ImageCache.GetOrAdd(AppDomain.CurrentDomain.BaseDirectory + "resources\\Level" + level.ToString() + ".png");
+            var expbar = ImageCache.GetOrAdd(AppDomain.CurrentDomain.BaseDirectory + "resources\\ExpBar" + theme + ".png");
+            using (var bmp = new Bitmap(image, 285, 96))
             {
                 using (var g = Graphics.FromImage(bmp))
                 {
-                    g.DrawImage(image, 0, 0, 285, 96);
                     g.DrawImage(avatar, 19, 19, 40, 40);
                     g.DrawImage(icon, 73, 26, 26, 26);
                     g.DrawImage(expbar, 38, 64, 200 * expBar.Percentage, 11);
@@ -98,33 +93,27 @@ namespace DiscordBot.Helpers
                     }
                 }
 
-                bmp.Save(AppDomain.CurrentDomain.BaseDirectory + "resources\\ranktemp_" + uid + ".png");
-            }
+                avatar.Dispose();
 
-            image.Dispose();
-            avatar.Dispose();
-            icon.Dispose();
-            expbar.Dispose();
+                return bmp.ToStream();
+            }
         }
 
-        public static void DrawDailyImage(uint penGain, ulong uid)
+        public static MemoryStream DrawDailyImage(uint penGain)
         {
-            var image = Image.FromFile(AppDomain.CurrentDomain.BaseDirectory + "resources\\Daily.png");
-            using (var bmp = new Bitmap(1054, 301))
+            var image = ImageCache.GetOrAdd(AppDomain.CurrentDomain.BaseDirectory + "resources\\Daily.png");
+            using (var bmp = new Bitmap(image, 1054, 301))
             {
                 using (var g = Graphics.FromImage(bmp))
                 {
-                    g.DrawImage(image, 0, 0, 1054, 301);
                     using (var penFont = new Font("Arial", 50, FontStyle.Bold))
                     {
                         g.DrawString(penGain.ToString() + " PEN", penFont, Brushes.White, 525, 140);
                     }
                 }
 
-                bmp.Save(AppDomain.CurrentDomain.BaseDirectory + "resources\\dailytemp_" + uid + ".png");
+                return bmp.ToStream();
             }
-
-            image.Dispose();
         }
 
         private static SizeF MeasureString(string text, Font font)
@@ -133,6 +122,25 @@ namespace DiscordBot.Helpers
             {
                 return g.MeasureString(text, font);
             }
+        }
+        private static async Task<Image> GetAvatarAsync(string url)
+        {
+            using (var webClient = new WebClient())
+            {
+                using (var stream = await webClient.OpenReadTaskAsync(new Uri(url)))
+                {
+                    return Image.FromStream(stream);
+                }
+            }
+        }
+
+        private static MemoryStream ToStream(this Image image)
+        {
+            var stream = new MemoryStream();
+            image.Save(stream, ImageFormat.Png);
+            stream.Position = 0;
+
+            return stream;
         }
     }
 }
