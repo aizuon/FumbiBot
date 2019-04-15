@@ -31,6 +31,8 @@ namespace DiscordBot.Helpers
             foreach (var image in ImageStore)
                 image.Value.Dispose();
 
+            ImageStore.Clear();
+
             GC.Collect();
         }
     }
