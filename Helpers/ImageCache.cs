@@ -13,6 +13,7 @@ namespace DiscordBot.Helpers
         {
             if (!ImageStore.TryGetValue(path, out var image))
                 image = CacheImageFromDisk(path);
+
             return image;
         }
 
@@ -22,6 +23,7 @@ namespace DiscordBot.Helpers
             {
                 var image = Image.FromStream(fs);
                 ImageStore.TryAdd(path, image);
+
                 return image;
             }
         }

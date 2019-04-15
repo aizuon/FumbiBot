@@ -190,7 +190,7 @@ namespace DiscordBot.Modules
         [Cooldown(60, true)]
         public async Task TopCommand()
         {
-            var rankList = await UserService.GetTopList();
+            var rankList = await UserService.GetTopListAsync();
 
             var embed = new EmbedBuilder();
             embed.WithTitle("Rank list");

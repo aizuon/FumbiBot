@@ -47,14 +47,14 @@ namespace DiscordBot.Services
 
         public static async Task<uint> CalculateRankAsync(ulong uid)
         {
-            var users = (await Database.GetCurrentConnection().FindAsync<User>()).ToList();
+            var users = (await _connection.FindAsync<User>()).ToList();
             var rankList = users.OrderByDescending(i => i.Exp).ToList();
             return (uint)rankList.FindIndex(i => i.Uid == uid) + 1;
         }
 
-        public static async Task<List<User>> GetTopList()
+        public static async Task<List<User>> GetTopListAsync()
         {
-            var users = (await Database.GetCurrentConnection().FindAsync<User>()).ToList();
+            var users = (await _connection.FindAsync<User>()).ToList();
             var rankList = users.OrderByDescending(i => i.Exp).ToList();
             return rankList;
         }

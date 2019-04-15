@@ -38,7 +38,7 @@ namespace DiscordBot.Services
                 Pug = 0
             };
 
-            await Database.GetCurrentConnection().InsertAsync(newInventory);
+            await _connection.InsertAsync(newInventory);
             return newInventory;
         }
 
