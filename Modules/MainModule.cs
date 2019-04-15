@@ -250,6 +250,7 @@ namespace DiscordBot.Modules
                 await ReplyAsync("No permission!");
                 return;
             }
+
             Environment.Exit(0);
         }
     }
