@@ -40,7 +40,7 @@ namespace DiscordBot.Handlers
 
             var user = await UserService.FindUserAsync(message.Author.Id, message.Author.Username);
 
-            if (await user.OnMessageRecievedAsync((uint)message.Content.Length, message.Author.Username))
+            if (await user.MessageRecievedAsync((uint)message.Content.Length, message.Author.Username))
             {
                 await user.UpdateUserAsync();
 
@@ -59,28 +59,34 @@ namespace DiscordBot.Handlers
 
         private static async Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result)
         {
-            if (!command.IsSpecified)
-            {
-                await context.Channel.SendMessageAsync("Command not found");
-                Logger.Information("Non-existing command {command} used by {name}({uid}).", context.Message.Content, context.User.Username, context.User.Id);
-                return;
-            }
-
             if (result.IsSuccess)
             {
                 Logger.Information("Command {command} used by {name}({uid}).", context.Message.Content, context.User.Username, context.User.Id);
                 return;
             }
 
-            if (result.Error == CommandError.UnmetPrecondition)
+            switch (result.Error)
             {
-                Logger.Warning("Command {command} is on cooldown for {name}({uid}).", context.Message, context.User.Username, context.User.Id);
-                await context.Channel.SendMessageAsync(result.ToString().Substring(19, result.ToString().Length - 19));
-                return;
-            }
+                case CommandError.UnknownCommand:
+                    await context.Channel.SendMessageAsync("Command not found.");
+                    Logger.Information("Non-existing command {command} used by {name}({uid}).", context.Message.Content, context.User.Username, context.User.Id);
+                    break;
 
-            await context.Channel.SendMessageAsync($"Something went wrong -> error: {result}");
-            Logger.Error($"Something went wrong -> error: {result}");
+                case CommandError.UnmetPrecondition:
+                    Logger.Warning("Command {command} is on cooldown for {name}({uid}).", context.Message, context.User.Username, context.User.Id);
+                    await context.Channel.SendMessageAsync(result.ToString().Substring(19, result.ToString().Length - 19));
+                    break;
+
+                case CommandError.BadArgCount:
+                case CommandError.ParseFailed:
+                    await context.Channel.SendMessageAsync("Wrong usage.");
+                    break;
+
+                default:
+                    await context.Channel.SendMessageAsync($"Something went wrong -> {result.ToString()}");
+                    Logger.Error($"Something went wrong -> {result.ToString()}");
+                    break;
+            }
         }
     }
 }

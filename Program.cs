@@ -17,13 +17,12 @@ namespace DiscordBot
             Database.Open();
         }
 
-        static void Main()
-        {
-            Bot.Start(Config.Instance.BotToken);
-        }
+        static void Main() => Bot.Start(Config.Instance.BotToken);
 
         private static void OnProcessExit(object sender, EventArgs e)
         {
+            Bot.Stop();
+
             Database.Close();
 
             ImageCache.Dispose();

@@ -31,7 +31,7 @@ namespace DiscordBot
 
         public byte Hitler2 { get; set; }
 
-        public async Task UpdateInventoryAsync() => await InventoryService.UpdateInventoryAsync(this);
+        public async Task<bool> UpdateInventoryAsync() => await InventoryService.UpdateInventoryAsync(this);
 
         public void AddItem(string item) => InventoryService.AddItem(item, this);
 

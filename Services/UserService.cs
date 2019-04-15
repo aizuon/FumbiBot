@@ -256,7 +256,7 @@ namespace DiscordBot.Services
                 return 100000;
         }
 
-        public static async Task<bool> OnMessageRecievedAsync(uint length, string name, User user)
+        public static async Task<bool> MessageRecievedAsync(uint length, string name, User user)
         {
             UpdateUsername(name, user);
 
