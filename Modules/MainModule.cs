@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using DiscordBot.Handlers;
+using DiscordBot.Helpers;
 using DiscordBot.Services;
 using Serilog;
 using Serilog.Core;
@@ -45,6 +46,34 @@ namespace DiscordBot.Modules
             var user = await UserService.FindUserAsync(mention.Id, mention.Username);
 
             await Context.Channel.SendFileAsync(await user.DrawProfileImageAsync(await UserService.CalculateRankAsync(mention.Id), mention.GetAvatarUrl()), "profile.png");
+        }
+
+        [Command("avatar")]
+        [Cooldown]
+        public async Task AvatarCommand()
+        {
+            if (Context.User.GetAvatarUrl() == null)
+            {
+                await ReplyAsync("Please set up an avatar first.");
+                Logger.Information("H!avatar used by {name}({uid}) with empty avatar", Context.User.Username, Context.User.Id);
+                return;
+            }
+
+            await Context.Channel.SendFileAsync(await GraphicsHelper.GetAvatarStreamAsync(Context.User.GetAvatarUrl(ImageFormat.Auto, 512)), "avatar.png");
+        }
+
+        [Command("avatar")]
+        [Cooldown]
+        public async Task AvatarCommand(IUser mention)
+        {
+            if (mention.GetAvatarUrl() == null)
+            {
+                await ReplyAsync("User does not have an avatar.");
+                Logger.Information("H!avatar used by {name}({uid}) with empty avatar(mentioned)", Context.User.Username, Context.User.Id);
+                return;
+            }
+
+            await Context.Channel.SendFileAsync(await GraphicsHelper.GetAvatarStreamAsync(mention.GetAvatarUrl(ImageFormat.Auto, 512)), "avatar.png");
         }
 
         [Command("rank")]

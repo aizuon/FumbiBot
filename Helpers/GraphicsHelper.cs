@@ -134,6 +134,14 @@ namespace DiscordBot.Helpers
             }
         }
 
+        public static async Task<Stream> GetAvatarStreamAsync(string url)
+        {
+            using (var webClient = new WebClient())
+            {
+                return await webClient.OpenReadTaskAsync(new Uri(url));
+            }
+        }
+
         private static MemoryStream ToStream(this Image image)
         {
             var stream = new MemoryStream();
