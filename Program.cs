@@ -17,7 +17,7 @@ namespace DiscordBot
             Database.Open();
         }
 
-        static void Main() => Bot.Start(Config.Instance.BotToken);
+        private static void Main() => Bot.Start(Config.Instance.BotToken);
 
         private static void OnProcessExit(object sender, EventArgs e)
         {
