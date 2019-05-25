@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Core;
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -43,6 +44,32 @@ namespace DiscordBot.Handlers
             if (await user.MessageRecievedAsync((uint)message.Content.Length, message.Author.Username))
             {
                 await user.UpdateUserAsync();
+
+                if (user.Level == 1)
+                {
+                    var role = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Rookie");
+                    await (message.Author as IGuildUser).AddRoleAsync(role);
+                }
+                else if (user.Level == 20)
+                {
+                    var role = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Amateur");
+                    await (message.Author as IGuildUser).AddRoleAsync(role);
+                }
+                else if (user.Level == 40)
+                {
+                    var role = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Semi-Pro");
+                    await (message.Author as IGuildUser).AddRoleAsync(role);
+                }
+                else if (user.Level == 60)
+                {
+                    var role = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Pro");
+                    await (message.Author as IGuildUser).AddRoleAsync(role);
+                }
+                else if (user.Level == 80)
+                {
+                    var role = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "S4");
+                    await (message.Author as IGuildUser).AddRoleAsync(role);
+                }
 
                 await message.Channel.SendFileAsync(user.DrawLevelUpImage(), "levelup.png");
 

@@ -13,8 +13,8 @@
             Lilith,
             Ophelia,
             Pug,
-            Hitler,
-            Hitler2
+            //Hitler,
+            //Hitler2
         }
     }
 }

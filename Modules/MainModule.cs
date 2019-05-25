@@ -205,9 +205,8 @@ namespace DiscordBot.Modules
                 user.Pen += penGain;
                 user.LastDaily = DateTime.Now.ToString();
                 await user.UpdateUserAsync();
-
-                user.DrawDailyImage(penGain);
-                await Context.Channel.SendFileAsync(AppDomain.CurrentDomain.BaseDirectory + "resources\\dailytemp_" + Context.User.Id + ".png");
+                
+                await Context.Channel.SendFileAsync(user.DrawDailyImage(penGain), "daily.png");
                 return;
             }
 
