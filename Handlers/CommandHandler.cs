@@ -79,7 +79,8 @@ namespace DiscordBot.Handlers
                     await (message.Author as IGuildUser).AddRoleAsync(s4);
                 }
 
-                await message.Channel.SendFileAsync(user.DrawLevelUpImage(), "levelup.png");
+                if ((user.Level < 20 && user.Level % 4 == 0) || user.Level >= 20)
+                    await message.Channel.SendFileAsync(user.DrawLevelUpImage(), "levelup.png");
 
                 Logger.Information("Level up for {name}({uid}), new level -> {newlevel}", message.Author.Username, message.Author.Id, user.Level);
             }
