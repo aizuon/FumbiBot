@@ -127,7 +127,7 @@ namespace DiscordBot.Modules
         {
             var user = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
 
-            if (theme <= 0 || theme > 10)
+            if (theme <= 0 || theme > 8)
             {
                 await ReplyAsync("Theme not found.");
                 Logger.Information("H!buy used by {name}({uid}) with unknown theme -> {theme}", Context.User.Username, Context.User.Id, theme);
@@ -168,7 +168,7 @@ namespace DiscordBot.Modules
         {
             var user = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
 
-            if (theme < 0 || theme > 10)
+            if (theme < 0 || theme > 8)
             {
                 await ReplyAsync("Theme not found.");
                 Logger.Information("H!use used by {name}({uid}) with unknown theme -> {theme}", Context.User.Username, Context.User.Id, theme);
@@ -266,6 +266,41 @@ namespace DiscordBot.Modules
             await user.UpdateUserAsync();
             await ReplyAsync("Sadly, you have lost : ^(");
             Logger.Information("H!gamble lost by {name}({uid}) -> {amount} pen", Context.User.Username, Context.User.Id, amount);
+        }
+
+        [Command("givepen")]
+        [Cooldown]
+        public async Task PenCommand(IUser mention, uint amount)
+        {
+            if (Context.User.Id != Config.Instance.OwnerId)
+            {
+                Logger.Warning("H!givepen used by {name}({uid}) with no permission.", Context.User.Username, Context.User.Id);
+                await ReplyAsync("No permission!");
+                return;
+            }
+
+            var user = await UserService.FindUserAsync(mention.Id, mention.Username);
+
+            user.Pen += amount;
+            await user.UpdateUserAsync();
+        }
+
+        [Command("giveexp")]
+        [Cooldown]
+        public async Task ExpCommand(IUser mention, uint amount)
+        {
+            if (Context.User.Id != Config.Instance.OwnerId)
+            {
+                Logger.Warning("H!givepen used by {name}({uid}) with no permission.", Context.User.Username, Context.User.Id);
+                await ReplyAsync("No permission!");
+                return;
+            }
+
+            var user = await UserService.FindUserAsync(mention.Id, mention.Username);
+
+            user.Exp += amount;
+            user.Level = UserService.CalculateLevel(user.Exp);
+            await user.UpdateUserAsync();
         }
 
         [Command("shutdown")]
