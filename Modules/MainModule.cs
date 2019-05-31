@@ -291,7 +291,7 @@ namespace DiscordBot.Modules
         {
             if (Context.User.Id != Config.Instance.OwnerId)
             {
-                Logger.Warning("H!givepen used by {name}({uid}) with no permission.", Context.User.Username, Context.User.Id);
+                Logger.Warning("H!giveexp used by {name}({uid}) with no permission.", Context.User.Username, Context.User.Id);
                 await ReplyAsync("No permission!");
                 return;
             }
