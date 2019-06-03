@@ -1,6 +1,6 @@
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
--- Server version:               10.3.14-MariaDB - mariadb.org binary distribution
+-- Server version:               10.3.15-MariaDB - mariadb.org binary distribution
 -- Server OS:                    Win64
 -- HeidiSQL Version:             10.1.0.5464
 -- --------------------------------------------------------
@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `Pen` int(10) unsigned NOT NULL DEFAULT 0,
   `ProfileTheme` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `LastDaily` text DEFAULT NULL,
+  `DailyExp` text DEFAULT NULL,
   UNIQUE KEY `Uid` (`Uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

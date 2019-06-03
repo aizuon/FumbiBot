@@ -260,16 +260,19 @@ namespace DiscordBot.Services
         {
             UpdateUsername(name, user);
 
-            byte initalLevel = user.Level;
-            user.Exp += (length * 7 > 300) ? 300 : (length * 7);
-            byte newLevel = CalculateLevel(user.Exp);
-
-            if (newLevel != initalLevel)
+            if (CheckDailyExp(user, length))
             {
-                user.Level = newLevel;
-                user.Pen += CalculatePenGain(user.Level);
+                byte initalLevel = user.Level;
+                user.Exp += (length * 7 > 300) ? 300 : (length * 7);
+                byte newLevel = CalculateLevel(user.Exp);
 
-                return true;
+                if (newLevel != initalLevel)
+                {
+                    user.Level = newLevel;
+                    user.Pen += CalculatePenGain(user.Level);
+
+                    return true;
+                }
             }
 
             await UpdateUserAsync(user);
@@ -286,6 +289,39 @@ namespace DiscordBot.Services
             }
 
             user.Name = name;
+        }
+
+        public static bool CheckDailyExp(User user, uint length)
+        {
+            if (user.DailyExp == null)
+            {
+                user.DailyExp = 0.ToString().PadLeft(5, '0') + " || " + DateTime.Now.ToString();
+
+                return true;
+            }
+
+            var lastdaily = DateTime.Parse(user.DailyExp.Remove(0, 8));
+            var totalexp = uint.Parse(user.DailyExp.Remove(5));
+
+            if (totalexp > 75000 && (lastdaily - DateTime.Now).Days < 1)
+                return false;
+
+            if ((lastdaily - DateTime.Now).Days > 1)
+            {
+                user.DailyExp = 0.ToString().PadLeft(5, '0') + " || " + DateTime.Now.ToString();
+
+                return true;
+            }
+
+            if (totalexp <= 75000 && (lastdaily - DateTime.Now).Days < 1)
+            {
+                totalexp += (length * 7 > 300) ? 300 : (length * 7);
+                user.DailyExp = totalexp.ToString().PadLeft(5, '0') + " || " + lastdaily.ToString();
+
+                return true;
+            }
+
+            return false;
         }
     }
 }

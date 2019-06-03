@@ -113,7 +113,7 @@ namespace DiscordBot.Modules
         public async Task ShopCommand()
         {
             var embed = new EmbedBuilder();
-            embed.WithDescription("Write H!buy + themes id to buy, each theme is 50k pen");
+            embed.WithDescription("Write H!buy + themes id to buy, each theme is 250k pen");
             embed.WithTitle("Profile theme shop");
             foreach (var theme in Enum.GetValues(typeof(Shop.ProfileTheme)).Cast<Shop.ProfileTheme>().Skip(1).ToArray())
                 embed.AddField(theme.ToString(), theme.GetHashCode(), true);
@@ -134,7 +134,7 @@ namespace DiscordBot.Modules
                 return;
             }
 
-            if (user.Pen < 50000)
+            if (user.Pen < 250000)
             {
                 await ReplyAsync("Not enough pen.");
                 Logger.Information("H!buy used by {name}({uid}) with insufficient pen -> {pen}", Context.User.Username, Context.User.Id, user.Pen);
@@ -156,7 +156,7 @@ namespace DiscordBot.Modules
             await inventory.UpdateInventoryAsync();
 
             user.ProfileTheme = (byte)(i.GetHashCode());
-            user.Pen -= 50000;
+            user.Pen -= 250000;
             await user.UpdateUserAsync();
 
             await ReplyAsync("Theme successfully bought!");
@@ -212,6 +212,22 @@ namespace DiscordBot.Modules
 
             await ReplyAsync("You can claim your daily in " + (24 - (DateTime.Now - DateTime.Parse(user.LastDaily)).Hours).ToString() + "h");
             Logger.Information("H!daily used by {name}({uid}) while on cooldown, cooldown left -> {hours} h", Context.User.Username, Context.User.Id, (24 - (DateTime.Now - DateTime.Parse(user.LastDaily)).Hours).ToString());
+        }
+
+        [Command("dailyexp")]
+        [Cooldown(60, true)]
+        public async Task DailyExpCommand()
+        {
+            var user = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
+
+            var lastdaily = DateTime.Parse(user.DailyExp.Remove(0, 8));
+            var totalexp = uint.Parse(user.DailyExp.Remove(5));
+
+            if (totalexp > 75000 && (lastdaily - DateTime.Now).Days < 1)
+                await ReplyAsync("You have capped your daily exp limit and it will reset in " + (24 - (DateTime.Now - lastdaily).Hours).ToString() + "h");
+
+            if (totalexp <= 75000)
+                await ReplyAsync(75000 - totalexp + " exp remaining for today");
         }
 
         [Command("top")]
