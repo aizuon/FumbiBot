@@ -291,7 +291,7 @@ namespace DiscordBot.Services
             user.Name = name;
         }
 
-        public static bool CheckDailyExp(User user, uint length)
+        private static bool CheckDailyExp(User user, uint length)
         {
             if (user.DailyExp == null)
             {
