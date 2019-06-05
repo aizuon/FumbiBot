@@ -45,50 +45,56 @@ namespace DiscordBot.Handlers
             {
                 await user.UpdateUserAsync();
 
-                if (user.Level == 1)
+                var guild = (message.Channel as SocketGuildChannel).Guild;
+                if (guild.GetUser(_client.CurrentUser.Id).Roles.Where(r => r.Permissions.ManageRoles == true).ToList().Count != 0)
                 {
-                    var rookie = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Rookie");
-                    if (rookie != null)
-                        await (message.Author as IGuildUser).AddRoleAsync(rookie);
-                }
-                else if (user.Level == 20)
-                {
-                    var rookie = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Rookie");
-                    var ama = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Amateur");
-                    if (rookie != null && ama != null)
+                    var guilduser = (message.Author as IGuildUser);
+
+                    if (user.Level == 1)
                     {
-                        await (message.Author as IGuildUser).RemoveRoleAsync(rookie);
-                        await (message.Author as IGuildUser).AddRoleAsync(ama);
+                        var rookie = guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Rookie");
+                        if (rookie != null)
+                            await guilduser.AddRoleAsync(rookie);
                     }
-                }
-                else if (user.Level == 40)
-                {
-                    var ama = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Amateur");
-                    var semipro = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Semi-Pro");
-                    if (ama != null && semipro != null)
+                    else if (user.Level == 20)
                     {
-                        await (message.Author as IGuildUser).RemoveRoleAsync(ama);
-                        await (message.Author as IGuildUser).AddRoleAsync(semipro);
+                        var rookie = guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Rookie");
+                        var ama = guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Amateur");
+                        if (rookie != null && ama != null)
+                        {
+                            await guilduser.RemoveRoleAsync(rookie);
+                            await guilduser.AddRoleAsync(ama);
+                        }
                     }
-                }
-                else if (user.Level == 60)
-                {
-                    var semipro = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Semi-Pro");
-                    var pro = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Pro");
-                    if (semipro != null && semipro != null)
+                    else if (user.Level == 40)
                     {
-                        await (message.Author as IGuildUser).RemoveRoleAsync(semipro);
-                        await (message.Author as IGuildUser).AddRoleAsync(pro);
+                        var ama = guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Amateur");
+                        var semipro = guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Semi-Pro");
+                        if (ama != null && semipro != null)
+                        {
+                            await guilduser.RemoveRoleAsync(ama);
+                            await guilduser.AddRoleAsync(semipro);
+                        }
                     }
-                }
-                else if (user.Level == 80)
-                {
-                    var pro = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Pro");
-                    var s4 = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "S4");
-                    if (pro != null && s4 != null)
+                    else if (user.Level == 60)
                     {
-                        await (message.Author as IGuildUser).RemoveRoleAsync(pro);
-                        await (message.Author as IGuildUser).AddRoleAsync(s4);
+                        var semipro = guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Semi-Pro");
+                        var pro = guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Pro");
+                        if (semipro != null && semipro != null)
+                        {
+                            await guilduser.RemoveRoleAsync(semipro);
+                            await guilduser.AddRoleAsync(pro);
+                        }
+                    }
+                    else if (user.Level == 80)
+                    {
+                        var pro = guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Pro");
+                        var s4 = guild.Roles.FirstOrDefault(x => x.Name.ToString() == "S4");
+                        if (pro != null && s4 != null)
+                        {
+                            await guilduser.RemoveRoleAsync(pro);
+                            await guilduser.AddRoleAsync(s4);
+                        }
                     }
                 }
 

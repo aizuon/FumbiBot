@@ -6,6 +6,7 @@ using DiscordBot.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Core;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -61,79 +62,70 @@ namespace DiscordBot
             Logger.Information($"Checking roles for {g.Name}...");
 
             var db = Database.GetCurrentConnection();
-            var users = (await db.FindAsync<User>()).ToList();
+            var dbusers = (await db.FindAsync<User>()).ToList();
+            var users = g.Users.ToList();
 
-            foreach (var u in g.Users)
+            foreach (var u in users)
             {
-                foreach (var dbu in users)
+                var dbu = dbusers.Find(dbuser => dbuser.Uid == u.Id);
+                if (u == null)
+                    continue;
+
+                Logger.Information($"Proccessing user {dbu.Name}...");
+
+                if (dbu.Level < 20)
                 {
-                    if (u.Id == dbu.Uid)
+                    if (!u.Roles.Contains(rookie))
                     {
-                        if (dbu.Level < 20)
-                        {
-                            if (!u.Roles.Contains(rookie))
-                            {
-                                await u.AddRoleAsync(rookie);
-                            }
-
-                            await u.RemoveRoleAsync(ama);
-                            await u.RemoveRoleAsync(semipro);
-                            await u.RemoveRoleAsync(pro);
-                            await u.RemoveRoleAsync(s4);
-                        }
-
-                        else if (20 <= dbu.Level && dbu.Level < 40)
-                        {
-                            if (!u.Roles.Contains(ama))
-                            {
-                                await u.AddRoleAsync(ama);
-                            }
-
-                            await u.RemoveRoleAsync(rookie);
-                            await u.RemoveRoleAsync(semipro);
-                            await u.RemoveRoleAsync(pro);
-                            await u.RemoveRoleAsync(s4);
-                        }
-
-                        else if (40 <= dbu.Level && dbu.Level < 60)
-                        {
-                            if (!u.Roles.Contains(semipro))
-                            {
-                                await u.AddRoleAsync(semipro);
-                            }
-
-                            await u.RemoveRoleAsync(rookie);
-                            await u.RemoveRoleAsync(ama);
-                            await u.RemoveRoleAsync(pro);
-                            await u.RemoveRoleAsync(s4);
-                        }
-
-                        else if (60 <= dbu.Level && dbu.Level < 80)
-                        {
-                            if (!u.Roles.Contains(pro))
-                            {
-                                await u.AddRoleAsync(pro);
-                            }
-
-                            await u.RemoveRoleAsync(rookie);
-                            await u.RemoveRoleAsync(ama);
-                            await u.RemoveRoleAsync(semipro);
-                            await u.RemoveRoleAsync(s4);
-                        }
-
-                        else if (dbu.Level == 80)
-                        {
-                            if (!u.Roles.Contains(s4))
-                            {
-                                await u.AddRoleAsync(s4);
-                            }
-
-                            await u.RemoveRoleAsync(rookie);
-                            await u.RemoveRoleAsync(ama);
-                            await u.RemoveRoleAsync(semipro);
-                            await u.RemoveRoleAsync(pro);
-                        }
+                        await u.AddRoleAsync(rookie);
                     }
+
+                    if (u.Roles.Contains(ama) || u.Roles.Contains(semipro) || u.Roles.Contains(pro) || u.Roles.Contains(s4))
+                        await u.RemoveRolesAsync(new List<SocketRole> { ama, semipro, pro, s4 });
+                }
+
+                else if (20 <= dbu.Level && dbu.Level < 40)
+                {
+                    if (!u.Roles.Contains(ama))
+                    {
+                        await u.AddRoleAsync(ama);
+                    }
+
+                    if (u.Roles.Contains(rookie) || u.Roles.Contains(semipro) || u.Roles.Contains(pro) || u.Roles.Contains(s4))
+                        await u.RemoveRolesAsync(new List<SocketRole> { rookie, semipro, pro, s4 });
+                }
+
+                else if (40 <= dbu.Level && dbu.Level < 60)
+                {
+                    if (!u.Roles.Contains(semipro))
+                    {
+                        await u.AddRoleAsync(semipro);
+                    }
+
+                    if (u.Roles.Contains(rookie) || u.Roles.Contains(ama) || u.Roles.Contains(pro) || u.Roles.Contains(s4))
+                        await u.RemoveRolesAsync(new List<SocketRole> { rookie, ama, pro, s4 });
+                }
+
+                else if (60 <= dbu.Level && dbu.Level < 80)
+                {
+                    if (!u.Roles.Contains(pro))
+                    {
+                        await u.AddRoleAsync(pro);
+                    }
+
+                    if (u.Roles.Contains(rookie) || u.Roles.Contains(ama) || u.Roles.Contains(semipro) || u.Roles.Contains(s4))
+                        await u.RemoveRolesAsync(new List<SocketRole> { rookie, ama, semipro, s4 });
+                }
+
+                else if (dbu.Level == 80)
+                {
+                    if (!u.Roles.Contains(s4))
+                    {
+                        await u.AddRoleAsync(s4);
+                    }
+
+                    if (u.Roles.Contains(rookie) || u.Roles.Contains(ama) || u.Roles.Contains(semipro) || u.Roles.Contains(pro))
+                        await u.RemoveRolesAsync(new List<SocketRole> { rookie, ama, semipro, pro });
                 }
             }
 
