@@ -68,10 +68,10 @@ namespace DiscordBot
             foreach (var u in users)
             {
                 var dbu = dbusers.Find(dbuser => dbuser.Uid == u.Id);
-                if (u == null)
+                if (dbu == null)
                     continue;
 
-                Logger.Information($"Proccessing user {dbu.Name}...");
+                Logger.Information($"Proccessing user {dbu.Name}({dbu.Uid})...");
 
                 if (dbu.Level < 20)
                 {
