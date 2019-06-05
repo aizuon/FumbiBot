@@ -17,6 +17,7 @@ namespace DiscordBot.Modules
         private static readonly ILogger Logger = Log.ForContext(Constants.SourceContextPropertyName, nameof(MainModule));
 
         [Command("profile")]
+        [Summary("Displays user's own profile.")]
         [Cooldown]
         public async Task ProfileCommand()
         {
@@ -33,6 +34,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("profile")]
+        [Summary("Displays another user's profile.")]
         [Cooldown]
         public async Task ProfileCommand(IUser mention)
         {
@@ -49,6 +51,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("avatar")]
+        [Summary("Displays user's own avatar.")]
         [Cooldown]
         public async Task AvatarCommand()
         {
@@ -63,6 +66,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("avatar")]
+        [Summary("Displays another user's avatar.")]
         [Cooldown]
         public async Task AvatarCommand(IUser mention)
         {
@@ -77,6 +81,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("rank")]
+        [Summary("Displays user's own rank.")]
         [Cooldown]
         public async Task RankCommand()
         {
@@ -93,6 +98,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("rank")]
+        [Summary("Displays another user's rank.")]
         [Cooldown]
         public async Task RankCommand(IUser mention)
         {
@@ -109,6 +115,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("shop")]
+        [Summary("Displays items in the shop.")]
         [Cooldown]
         public async Task ShopCommand()
         {
@@ -122,6 +129,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("buy")]
+        [Summary("Buys items from the shop.")]
         [Cooldown]
         public async Task BuyCommand(byte theme)
         {
@@ -163,6 +171,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("use")]
+        [Summary("Equips items from user's inventory.")]
         [Cooldown]
         public async Task UseCommand(byte theme)
         {
@@ -193,6 +202,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("daily")]
+        [Summary("Claims daily pen reward.")]
         [Cooldown(60, true)]
         public async Task DailyCommand()
         {
@@ -205,7 +215,7 @@ namespace DiscordBot.Modules
                 user.Pen += penGain;
                 user.LastDaily = DateTime.Now.ToString();
                 await user.UpdateUserAsync();
-                
+
                 await Context.Channel.SendFileAsync(user.DrawDailyImage(penGain), "daily.png");
                 return;
             }
@@ -215,13 +225,14 @@ namespace DiscordBot.Modules
         }
 
         [Command("dailyexp")]
+        [Summary("Displays daily exp limit status.")]
         [Cooldown(60, true)]
         public async Task DailyExpCommand()
         {
             var user = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
 
             var lastdaily = DateTime.Parse(user.DailyExp.Remove(0, 8));
-            var totalexp = uint.Parse(user.DailyExp.Remove(5));
+            uint totalexp = uint.Parse(user.DailyExp.Remove(5));
 
             if (totalexp >= 75000 && (lastdaily - DateTime.Now).Days < 1)
                 await ReplyAsync("You have capped your daily exp limit and it will reset in " + (24 - (DateTime.Now - lastdaily).Hours).ToString() + "h");
@@ -231,6 +242,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("top")]
+        [Summary("Displays top rank list.")]
         [Cooldown(60, true)]
         public async Task TopCommand()
         {
@@ -255,6 +267,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("gamble")]
+        [Summary("Used to play gamble with pen.")]
         [Cooldown(30, true)]
         public async Task GambleCommand(ulong amount)
         {
@@ -285,6 +298,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("givepen")]
+        [Summary("Gives pen to a user, admin only.")]
         [Cooldown]
         public async Task PenCommand(IUser mention, ulong amount)
         {
@@ -302,6 +316,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("transfer")]
+        [Summary("Transfers pen from own balance to another user.")]
         [Cooldown]
         public async Task TransferCommand(IUser mention, ulong amount)
         {
@@ -324,6 +339,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("giveexp")]
+        [Summary("Gives exp to a user, admin only.")]
         [Cooldown]
         public async Task ExpCommand(IUser mention, uint amount)
         {
@@ -341,7 +357,22 @@ namespace DiscordBot.Modules
             await user.UpdateUserAsync();
         }
 
+        [Command("help")]
+        [Summary("Displays this message.")]
+        [Cooldown]
+        public async Task HelpCommand()
+        {
+            var commands = CommandHandler._commands.Commands.ToList();
+            var embedBuilder = new EmbedBuilder();
+
+            foreach (var command in commands)
+                embedBuilder.AddField(command.Name, command.Summary ?? "No description available");
+
+            await ReplyAsync("Here's a list of commands and their description: ", false, embedBuilder.Build());
+        }
+
         [Command("shutdown")]
+        [Summary("Terminates the bot, owner only.")]
         [Cooldown]
         public async Task ShutdownCommand()
         {

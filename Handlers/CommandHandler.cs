@@ -14,7 +14,7 @@ namespace DiscordBot.Handlers
 {
     public class CommandHandler
     {
-        private static CommandService _commands;
+        public static CommandService _commands;
         private static DiscordSocketClient _client;
         private static IServiceProvider _services;
 

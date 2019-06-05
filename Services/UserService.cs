@@ -295,14 +295,14 @@ namespace DiscordBot.Services
         {
             if (user.DailyExp == null)
             {
-                var exp = (length * 7 > 300) ? 300 : (length * 7);
+                uint exp = (length * 7 > 300) ? 300 : (length * 7);
                 user.DailyExp = exp.ToString().PadLeft(5, '0') + " || " + DateTime.Now.ToString();
 
                 return true;
             }
 
             var lastdaily = DateTime.Parse(user.DailyExp.Remove(0, 8));
-            var totalexp = uint.Parse(user.DailyExp.Remove(5));
+            uint totalexp = uint.Parse(user.DailyExp.Remove(5));
 
             if (totalexp >= 75000 && (lastdaily - DateTime.Now).Days < 1)
                 return false;

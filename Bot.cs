@@ -59,7 +59,7 @@ namespace DiscordBot
             if (rookie == null && ama == null && semipro == null && pro == null && s4 == null)
                 return;
 
-            Logger.Information($"Checking roles for {g.Name}...");
+            Logger.Information("Checking roles for {guildName}...", g.Name);
 
             var db = Database.GetCurrentConnection();
             var dbusers = (await db.FindAsync<User>()).ToList();
@@ -71,7 +71,7 @@ namespace DiscordBot
                 if (dbu == null)
                     continue;
 
-                Logger.Information($"Proccessing user {dbu.Name}({dbu.Uid})...");
+                Logger.Information("Proccessing user {username}({userid})...", dbu.Name, dbu.Uid);
 
                 if (dbu.Level < 20)
                 {
