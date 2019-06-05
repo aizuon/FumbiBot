@@ -1,10 +1,12 @@
-﻿using Discord;
+﻿using Dapper.FastCrud;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Core;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DiscordBot
@@ -37,7 +39,105 @@ namespace DiscordBot
 
             await _services.GetRequiredService<CommandHandler>().InitializeAsync();
 
+            _client.GuildAvailable += GuildAvaliableAsync;
+
             await Task.Delay(-1);
+        }
+
+        private static async Task GuildAvaliableAsync(SocketGuild g)
+        {
+            if (g.GetUser(_client.CurrentUser.Id).Roles.Where(r => r.Permissions.ManageRoles == true).ToList().Count == 0)
+                return;
+
+            var rookie = g.Roles.FirstOrDefault(x => x.Name.ToString() == "Rookie");
+            var ama = g.Roles.FirstOrDefault(x => x.Name.ToString() == "Amateur");
+            var semipro = g.Roles.FirstOrDefault(x => x.Name.ToString() == "Semi-Pro");
+            var pro = g.Roles.FirstOrDefault(x => x.Name.ToString() == "Pro");
+            var s4 = g.Roles.FirstOrDefault(x => x.Name.ToString() == "S4");
+
+            if (rookie == null && ama == null && semipro == null && pro == null && s4 == null)
+                return;
+
+            Logger.Information($"Checking roles for {g.Name}...");
+
+            var db = Database.GetCurrentConnection();
+            var users = (await db.FindAsync<User>()).ToList();
+
+            foreach (var u in g.Users)
+            {
+                foreach (var dbu in users)
+                {
+                    if (u.Id == dbu.Uid)
+                    {
+                        if (dbu.Level < 20)
+                        {
+                            if (!u.Roles.Contains(rookie))
+                            {
+                                await u.AddRoleAsync(rookie);
+                            }
+
+                            await u.RemoveRoleAsync(ama);
+                            await u.RemoveRoleAsync(semipro);
+                            await u.RemoveRoleAsync(pro);
+                            await u.RemoveRoleAsync(s4);
+                        }
+
+                        else if (20 <= dbu.Level && dbu.Level < 40)
+                        {
+                            if (!u.Roles.Contains(ama))
+                            {
+                                await u.AddRoleAsync(ama);
+                            }
+
+                            await u.RemoveRoleAsync(rookie);
+                            await u.RemoveRoleAsync(semipro);
+                            await u.RemoveRoleAsync(pro);
+                            await u.RemoveRoleAsync(s4);
+                        }
+
+                        else if (40 <= dbu.Level && dbu.Level < 60)
+                        {
+                            if (!u.Roles.Contains(semipro))
+                            {
+                                await u.AddRoleAsync(semipro);
+                            }
+
+                            await u.RemoveRoleAsync(rookie);
+                            await u.RemoveRoleAsync(ama);
+                            await u.RemoveRoleAsync(pro);
+                            await u.RemoveRoleAsync(s4);
+                        }
+
+                        else if (60 <= dbu.Level && dbu.Level < 80)
+                        {
+                            if (!u.Roles.Contains(pro))
+                            {
+                                await u.AddRoleAsync(pro);
+                            }
+
+                            await u.RemoveRoleAsync(rookie);
+                            await u.RemoveRoleAsync(ama);
+                            await u.RemoveRoleAsync(semipro);
+                            await u.RemoveRoleAsync(s4);
+                        }
+
+                        else if (dbu.Level == 80)
+                        {
+                            if (!u.Roles.Contains(s4))
+                            {
+                                await u.AddRoleAsync(s4);
+                            }
+
+                            await u.RemoveRoleAsync(rookie);
+                            await u.RemoveRoleAsync(ama);
+                            await u.RemoveRoleAsync(semipro);
+                            await u.RemoveRoleAsync(pro);
+                        }
+                    }
+                }
+            }
+
+            Logger.Information("Done!");
         }
 
         private static async Task LogAsync(LogMessage log)

@@ -48,35 +48,48 @@ namespace DiscordBot.Handlers
                 if (user.Level == 1)
                 {
                     var rookie = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Rookie");
-                    await (message.Author as IGuildUser).AddRoleAsync(rookie);
+                    if (rookie != null)
+                        await (message.Author as IGuildUser).AddRoleAsync(rookie);
                 }
                 else if (user.Level == 20)
                 {
                     var rookie = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Rookie");
-                    await (message.Author as IGuildUser).RemoveRoleAsync(rookie);
                     var ama = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Amateur");
-                    await (message.Author as IGuildUser).AddRoleAsync(ama);
+                    if (rookie != null && ama != null)
+                    {
+                        await (message.Author as IGuildUser).RemoveRoleAsync(rookie);
+                        await (message.Author as IGuildUser).AddRoleAsync(ama);
+                    }
                 }
                 else if (user.Level == 40)
                 {
                     var ama = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Amateur");
-                    await (message.Author as IGuildUser).RemoveRoleAsync(ama);
                     var semipro = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Semi-Pro");
-                    await (message.Author as IGuildUser).AddRoleAsync(semipro);
+                    if (ama != null && semipro != null)
+                    {
+                        await (message.Author as IGuildUser).RemoveRoleAsync(ama);
+                        await (message.Author as IGuildUser).AddRoleAsync(semipro);
+                    }
                 }
                 else if (user.Level == 60)
                 {
                     var semipro = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Semi-Pro");
-                    await (message.Author as IGuildUser).RemoveRoleAsync(semipro);
                     var pro = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Pro");
-                    await (message.Author as IGuildUser).AddRoleAsync(pro);
+                    if (semipro != null && semipro != null)
+                    {
+                        await (message.Author as IGuildUser).RemoveRoleAsync(semipro);
+                        await (message.Author as IGuildUser).AddRoleAsync(pro);
+                    }
                 }
                 else if (user.Level == 80)
                 {
                     var pro = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "Pro");
-                    await (message.Author as IGuildUser).RemoveRoleAsync(pro);
                     var s4 = (message.Channel as SocketGuildChannel).Guild.Roles.FirstOrDefault(x => x.Name.ToString() == "S4");
-                    await (message.Author as IGuildUser).AddRoleAsync(s4);
+                    if (pro != null && s4 != null)
+                    {
+                        await (message.Author as IGuildUser).RemoveRoleAsync(pro);
+                        await (message.Author as IGuildUser).AddRoleAsync(s4);
+                    }
                 }
 
                 if ((user.Level < 20 && user.Level % 4 == 0) || user.Level >= 20)
@@ -115,7 +128,7 @@ namespace DiscordBot.Handlers
 
                 case CommandError.BadArgCount:
                 case CommandError.ParseFailed:
-                    Logger.Information("{name}({uid}) used a command wrong -> .", context.User.Username, context.User.Id, context.Message.Content);
+                    Logger.Information("{name}({uid}) used a command wrong -> {command}.", context.User.Username, context.User.Id, context.Message.Content);
                     await context.Channel.SendMessageAsync("Wrong usage.");
                     break;
 

@@ -223,10 +223,10 @@ namespace DiscordBot.Modules
             var lastdaily = DateTime.Parse(user.DailyExp.Remove(0, 8));
             var totalexp = uint.Parse(user.DailyExp.Remove(5));
 
-            if (totalexp > 75000 && (lastdaily - DateTime.Now).Days < 1)
+            if (totalexp >= 75000 && (lastdaily - DateTime.Now).Days < 1)
                 await ReplyAsync("You have capped your daily exp limit and it will reset in " + (24 - (DateTime.Now - lastdaily).Hours).ToString() + "h");
 
-            if (totalexp <= 75000)
+            if (totalexp < 75000)
                 await ReplyAsync(75000 - totalexp + " exp remaining for today");
         }
 
@@ -256,7 +256,7 @@ namespace DiscordBot.Modules
 
         [Command("gamble")]
         [Cooldown(30, true)]
-        public async Task GambleCommand(uint amount)
+        public async Task GambleCommand(ulong amount)
         {
             var user = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
 
@@ -286,7 +286,7 @@ namespace DiscordBot.Modules
 
         [Command("givepen")]
         [Cooldown]
-        public async Task PenCommand(IUser mention, uint amount)
+        public async Task PenCommand(IUser mention, ulong amount)
         {
             if (Context.User.Id != Config.Instance.OwnerId)
             {
@@ -299,6 +299,28 @@ namespace DiscordBot.Modules
 
             user.Pen += amount;
             await user.UpdateUserAsync();
+        }
+
+        [Command("transfer")]
+        [Cooldown]
+        public async Task TransferCommand(IUser mention, ulong amount)
+        {
+            var transferrer = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
+
+            if (transferrer.Pen < amount)
+            {
+                await ReplyAsync("You don't have enough pen.");
+                Logger.Information("H!transfer used by {name}({uid}) with insufficient pen -> {currentPen}({amount})", Context.User.Username, Context.User.Id, transferrer.Pen, amount);
+                return;
+            }
+
+            transferrer.Pen -= amount;
+            await transferrer.UpdateUserAsync();
+
+            var transferee = await UserService.FindUserAsync(mention.Id, mention.Username);
+
+            transferee.Pen += amount;
+            await transferee.UpdateUserAsync();
         }
 
         [Command("giveexp")]

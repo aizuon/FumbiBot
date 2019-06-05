@@ -295,7 +295,8 @@ namespace DiscordBot.Services
         {
             if (user.DailyExp == null)
             {
-                user.DailyExp = 0.ToString().PadLeft(5, '0') + " || " + DateTime.Now.ToString();
+                var exp = (length * 7 > 300) ? 300 : (length * 7);
+                user.DailyExp = exp.ToString().PadLeft(5, '0') + " || " + DateTime.Now.ToString();
 
                 return true;
             }
@@ -303,7 +304,7 @@ namespace DiscordBot.Services
             var lastdaily = DateTime.Parse(user.DailyExp.Remove(0, 8));
             var totalexp = uint.Parse(user.DailyExp.Remove(5));
 
-            if (totalexp > 75000 && (lastdaily - DateTime.Now).Days < 1)
+            if (totalexp >= 75000 && (lastdaily - DateTime.Now).Days < 1)
                 return false;
 
             if ((lastdaily - DateTime.Now).Days > 1)
@@ -313,7 +314,7 @@ namespace DiscordBot.Services
                 return true;
             }
 
-            if (totalexp <= 75000 && (lastdaily - DateTime.Now).Days < 1)
+            if (totalexp < 75000 && (lastdaily - DateTime.Now).Days < 1)
             {
                 totalexp += (length * 7 > 300) ? 300 : (length * 7);
                 user.DailyExp = totalexp.ToString().PadLeft(5, '0') + " || " + lastdaily.ToString();

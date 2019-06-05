@@ -19,7 +19,7 @@ namespace DiscordBot
 
         public uint Exp { get; set; }
 
-        public uint Pen { get; set; }
+        public ulong Pen { get; set; }
 
         public byte ProfileTheme { get; set; }
 

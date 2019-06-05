@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `Name` text DEFAULT NULL,
   `Level` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `Exp` int(10) unsigned NOT NULL DEFAULT 0,
-  `Pen` int(10) unsigned NOT NULL DEFAULT 0,
+  `Pen` bigint(20) unsigned NOT NULL DEFAULT 0,
   `ProfileTheme` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `LastDaily` text DEFAULT NULL,
   `DailyExp` text DEFAULT NULL,
