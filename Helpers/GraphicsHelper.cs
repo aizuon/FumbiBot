@@ -30,7 +30,7 @@ namespace DiscordBot.Helpers
             }
         }
 
-        public static async Task<MemoryStream> DrawProfileImageAsync(uint level, string name, uint exp, uint pen, uint rank, byte theme, UserService.ExpBar expBar, string avatarUrl)
+        public static async Task<MemoryStream> DrawProfileImageAsync(uint level, string name, uint exp, ulong pen, uint rank, byte theme, UserService.ExpBar expBar, string avatarUrl)
         {
             var image = ImageCache.GetOrAdd(AppDomain.CurrentDomain.BaseDirectory + "resources\\Profile" + theme + ".png");
             var avatar = await GetAvatarAsync(avatarUrl);
