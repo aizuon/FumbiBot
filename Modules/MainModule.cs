@@ -336,6 +336,8 @@ namespace DiscordBot.Modules
 
             transferee.Pen += amount;
             await transferee.UpdateUserAsync();
+
+            await ReplyAsync("Transfer successful!");
         }
 
         [Command("giveexp")]
