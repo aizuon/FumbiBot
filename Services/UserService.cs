@@ -280,7 +280,7 @@ namespace DiscordBot.Services
             return false;
         }
 
-        private static void UpdateUsername(string name, User user)
+        public static void UpdateUsername(string name, User user)
         {
             if (!name.All(char.IsLetterOrDigit))
             {

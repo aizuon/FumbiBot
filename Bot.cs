@@ -3,6 +3,7 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.Handlers;
+using DiscordBot.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Core;
@@ -67,11 +68,20 @@ namespace DiscordBot
 
             foreach (var u in users)
             {
+                if (u.IsBot)
+                    continue;
+
                 var dbu = dbusers.Find(dbuser => dbuser.Uid == u.Id);
                 if (dbu == null)
                     continue;
 
                 Logger.Information("Proccessing user {username}({userid})...", dbu.Name, dbu.Uid);
+
+                if (u.Username != dbu.Name)
+                {
+                    UserService.UpdateUsername(u.Username, dbu);
+                    await dbu.UpdateUserAsync();
+                }
 
                 if (dbu.Level < 20)
                 {
