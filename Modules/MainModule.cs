@@ -17,7 +17,7 @@ namespace DiscordBot.Modules
         private static readonly ILogger Logger = Log.ForContext(Constants.SourceContextPropertyName, nameof(MainModule));
 
         [Command("profile")]
-        [Summary("Displays user's own profile.")]
+        [Summary("Displays own profile.")]
         [Cooldown]
         public async Task ProfileCommand()
         {
@@ -51,7 +51,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("avatar")]
-        [Summary("Displays user's own avatar.")]
+        [Summary("Displays own avatar.")]
         [Cooldown]
         public async Task AvatarCommand()
         {
@@ -62,7 +62,7 @@ namespace DiscordBot.Modules
                 return;
             }
 
-            await Context.Channel.SendFileAsync(await GraphicsHelper.GetAvatarStreamAsync(Context.User.GetAvatarUrl(ImageFormat.Auto, 512)), "avatar.png");
+            await Context.Channel.SendFileAsync(await GraphicsHelper.GetAvatarStreamAsync(Context.User.GetAvatarUrl(ImageFormat.Auto, 1024)), "avatar.png");
         }
 
         [Command("avatar")]
@@ -81,7 +81,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("rank")]
-        [Summary("Displays user's own rank.")]
+        [Summary("Displays own rank.")]
         [Cooldown]
         public async Task RankCommand()
         {
@@ -171,7 +171,7 @@ namespace DiscordBot.Modules
         }
 
         [Command("use")]
-        [Summary("Equips items from user's inventory.")]
+        [Summary("Equips items from inventory.")]
         [Cooldown]
         public async Task UseCommand(byte theme)
         {
@@ -226,7 +226,7 @@ namespace DiscordBot.Modules
 
         [Command("dailyexp")]
         [Summary("Displays daily exp limit status.")]
-        [Cooldown(60, true)]
+        [Cooldown]
         public async Task DailyExpCommand()
         {
             var user = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
@@ -268,7 +268,7 @@ namespace DiscordBot.Modules
 
         [Command("gamble")]
         [Summary("Used to play gamble with pen.")]
-        [Cooldown(30, true)]
+        [Cooldown]
         public async Task GambleCommand(ulong amount)
         {
             var user = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
@@ -295,6 +295,17 @@ namespace DiscordBot.Modules
             await user.UpdateUserAsync();
             await ReplyAsync("Sadly, you have lost : ^(");
             Logger.Information("H!gamble lost by {name}({uid}) -> {amount} pen", Context.User.Username, Context.User.Id, amount);
+        }
+
+        [Command("balance")]
+        [Alias("bal")]
+        [Summary("Displays current balance.")]
+        [Cooldown]
+        public async Task BalanceCommand()
+        {
+            var user = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
+
+            await ReplyAsync($"Your current balance is {user.Pen} pen.");
         }
 
         [Command("givepen")]
@@ -361,16 +372,19 @@ namespace DiscordBot.Modules
 
         [Command("help")]
         [Summary("Displays this message.")]
-        [Cooldown]
+        [Cooldown(60, true)]
         public async Task HelpCommand()
         {
             var commands = CommandHandler._commands.Commands.ToList();
-            var embedBuilder = new EmbedBuilder();
+            var embed = new EmbedBuilder();
+
+            embed.WithDescription("Here's a list of commands and their description:");
+            embed.WithTitle("Commands");
 
             foreach (var command in commands)
-                embedBuilder.AddField(command.Name, command.Summary ?? "No description available");
+                embed.AddField(command.Name, command.Summary ?? "No description available");
 
-            await ReplyAsync("Here's a list of commands and their description: ", false, embedBuilder.Build());
+            await ReplyAsync("", false, embed.Build());
         }
 
         [Command("shutdown")]
