@@ -304,17 +304,17 @@ namespace DiscordBot.Services
             var lastdaily = DateTime.Parse(user.DailyExp.Remove(0, 8));
             uint totalexp = uint.Parse(user.DailyExp.Remove(5));
 
-            if (totalexp >= 75000 && (lastdaily - DateTime.Now).Days < 1)
+            if (totalexp >= 75000 && (DateTime.Now - lastdaily).Days < 1)
                 return false;
 
-            if ((lastdaily - DateTime.Now).Days > 1)
+            if ((DateTime.Now - lastdaily).Days > 1)
             {
                 user.DailyExp = 0.ToString().PadLeft(5, '0') + " || " + DateTime.Now.ToString();
 
                 return true;
             }
 
-            if (totalexp < 75000 && (lastdaily - DateTime.Now).Days < 1)
+            if (totalexp < 75000 && (DateTime.Now - lastdaily).Days < 1)
             {
                 totalexp += (length * 7 > 300) ? 300 : (length * 7);
                 user.DailyExp = totalexp.ToString().PadLeft(5, '0') + " || " + lastdaily.ToString();

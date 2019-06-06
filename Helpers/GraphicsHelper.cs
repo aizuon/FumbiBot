@@ -1,10 +1,10 @@
-﻿using DiscordBot.Services;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using static DiscordBot.Services.UserService;
 
 namespace DiscordBot.Helpers
 {
@@ -30,7 +30,7 @@ namespace DiscordBot.Helpers
             }
         }
 
-        public static async Task<MemoryStream> DrawProfileImageAsync(uint level, string name, uint exp, ulong pen, uint rank, byte theme, UserService.ExpBar expBar, string avatarUrl)
+        public static async Task<MemoryStream> DrawProfileImageAsync(uint level, string name, uint exp, ulong pen, uint rank, byte theme, ExpBar expBar, string avatarUrl)
         {
             var image = ImageCache.GetOrAdd(AppDomain.CurrentDomain.BaseDirectory + "resources\\Profile" + theme + ".png");
             var avatar = await GetAvatarAsync(avatarUrl);
@@ -67,7 +67,7 @@ namespace DiscordBot.Helpers
             }
         }
 
-        public static async Task<MemoryStream> DrawRankImageAsync(uint level, string name, uint rank, byte theme, UserService.ExpBar expBar, string avatarUrl)
+        public static async Task<MemoryStream> DrawRankImageAsync(uint level, string name, uint rank, byte theme, ExpBar expBar, string avatarUrl)
         {
             var image = ImageCache.GetOrAdd(AppDomain.CurrentDomain.BaseDirectory + "resources\\Rank" + theme + ".png");
             var avatar = await GetAvatarAsync(avatarUrl);

@@ -220,8 +220,21 @@ namespace DiscordBot.Modules
                 return;
             }
 
-            await ReplyAsync("You can claim your daily in " + (24 - (DateTime.Now - DateTime.Parse(user.LastDaily)).Hours).ToString() + "h");
-            Logger.Information("H!daily used by {name}({uid}) while on cooldown, cooldown left -> {hours} h", Context.User.Username, Context.User.Id, (24 - (DateTime.Now - DateTime.Parse(user.LastDaily)).Hours).ToString());
+            double cd = (24 * 60 - (DateTime.Now - DateTime.Parse(user.LastDaily)).TotalMinutes);
+
+            uint h = (uint)(cd / 60);
+            uint m = (uint)(cd % 60);
+
+            if (h != 0)
+            {
+                await ReplyAsync("You can claim your daily in " + h + "h " + m + "m");
+                Logger.Information("H!daily used by {name}({uid}) while on cooldown, cooldown left -> {hours}h {minutes}m", Context.User.Username, Context.User.Id, h, m);
+            }
+            else
+            {
+                await ReplyAsync("You can claim your daily in " + m + "m");
+                Logger.Information("H!daily used by {name}({uid}) while on cooldown, cooldown left -> {minutes}m", Context.User.Username, Context.User.Id, m);
+            }
         }
 
         [Command("dailyexp")]
@@ -234,8 +247,22 @@ namespace DiscordBot.Modules
             var lastdaily = DateTime.Parse(user.DailyExp.Remove(0, 8));
             uint totalexp = uint.Parse(user.DailyExp.Remove(5));
 
-            if (totalexp >= 75000 && (lastdaily - DateTime.Now).Days < 1)
-                await ReplyAsync("You have capped your daily exp limit and it will reset in " + (24 - (DateTime.Now - lastdaily).Hours).ToString() + "h");
+            double cd = (24 * 60 - (DateTime.Now - lastdaily).TotalMinutes);
+
+            uint h = (uint)(cd / 60);
+            uint m = (uint)(cd % 60);
+
+            if (totalexp >= 75000 && (DateTime.Now - lastdaily).Days < 1)
+            {
+                if (h != 0)
+                {
+                    await ReplyAsync("You have capped your daily exp limit and it will reset in " + h + "h " + m + "m");
+                }
+                else
+                {
+                    await ReplyAsync("You have capped your daily exp limit and it will reset in " + m + "m");
+                }
+            }
 
             if (totalexp < 75000)
                 await ReplyAsync(75000 - totalexp + " exp remaining for today");
