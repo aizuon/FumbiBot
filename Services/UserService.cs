@@ -307,7 +307,7 @@ namespace DiscordBot.Services
             if (totalexp >= 75000 && (DateTime.Now - lastdaily).Days < 1)
                 return false;
 
-            if ((DateTime.Now - lastdaily).Days > 1)
+            if ((DateTime.Now - lastdaily).Days >= 1)
             {
                 user.DailyExp = 0.ToString().PadLeft(5, '0') + " || " + DateTime.Now.ToString();
 
