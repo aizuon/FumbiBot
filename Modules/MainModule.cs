@@ -30,7 +30,10 @@ namespace DiscordBot.Modules
 
             var user = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
 
-            await Context.Channel.SendFileAsync(await user.DrawProfileImageAsync(await UserService.CalculateRankAsync(Context.User.Id), Context.User.GetAvatarUrl()), "profile.png");
+            using (var image = await user.DrawProfileImageAsync(await UserService.CalculateRankAsync(Context.User.Id), Context.User.GetAvatarUrl()))
+            {
+                await Context.Channel.SendFileAsync(image, "profile.png");
+            }
         }
 
         [Command("profile")]
@@ -47,7 +50,10 @@ namespace DiscordBot.Modules
 
             var user = await UserService.FindUserAsync(mention.Id, mention.Username);
 
-            await Context.Channel.SendFileAsync(await user.DrawProfileImageAsync(await UserService.CalculateRankAsync(mention.Id), mention.GetAvatarUrl()), "profile.png");
+            using (var image = await user.DrawProfileImageAsync(await UserService.CalculateRankAsync(mention.Id), mention.GetAvatarUrl()))
+            {
+                await Context.Channel.SendFileAsync(image, "profile.png");
+            }
         }
 
         [Command("avatar")]
@@ -94,7 +100,10 @@ namespace DiscordBot.Modules
 
             var user = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
 
-            await Context.Channel.SendFileAsync(await user.DrawRankImageAsync(await UserService.CalculateRankAsync(Context.User.Id), Context.User.GetAvatarUrl()), "rank.png");
+            using (var image = await user.DrawRankImageAsync(await UserService.CalculateRankAsync(Context.User.Id), Context.User.GetAvatarUrl()))
+            {
+                await Context.Channel.SendFileAsync(image, "rank.png");
+            }
         }
 
         [Command("rank")]
@@ -111,7 +120,10 @@ namespace DiscordBot.Modules
 
             var user = await UserService.FindUserAsync(mention.Id, mention.Username);
 
-            await Context.Channel.SendFileAsync(await user.DrawRankImageAsync(await UserService.CalculateRankAsync(mention.Id), mention.GetAvatarUrl()), "rank.png");
+            using (var image = await user.DrawRankImageAsync(await UserService.CalculateRankAsync(mention.Id), mention.GetAvatarUrl()))
+            {
+                await Context.Channel.SendFileAsync(image, "rank.png");
+            }
         }
 
         [Command("shop")]
@@ -216,7 +228,10 @@ namespace DiscordBot.Modules
                 user.LastDaily = DateTime.Now.ToString();
                 await user.UpdateUserAsync();
 
-                await Context.Channel.SendFileAsync(user.DrawDailyImage(penGain), "daily.png");
+                using (var image = user.DrawDailyImage(penGain))
+                {
+                    await Context.Channel.SendFileAsync(image, "daily.png");
+                }
                 return;
             }
 

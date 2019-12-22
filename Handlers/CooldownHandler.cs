@@ -7,6 +7,18 @@ using System.Threading.Tasks;
 
 namespace DiscordBot.Handlers
 {
+    public struct CooldownInfo
+    {
+        public ulong UserId { get; }
+        public int CommandHashCode { get; }
+
+        public CooldownInfo(ulong userId, int commandHashCode)
+        {
+            UserId = userId;
+            CommandHashCode = commandHashCode;
+        }
+    }
+
     public class Cooldown : PreconditionAttribute
     {
         public TimeSpan CooldownLength;
@@ -23,18 +35,6 @@ namespace DiscordBot.Handlers
         {
             CooldownLength = TimeSpan.FromSeconds(seconds);
             AdminsAreLimited = areAdminsLimited;
-        }
-
-        public struct CooldownInfo
-        {
-            public ulong UserId { get; }
-            public int CommandHashCode { get; }
-
-            public CooldownInfo(ulong userId, int commandHashCode)
-            {
-                UserId = userId;
-                CommandHashCode = commandHashCode;
-            }
         }
 
         public override async Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)

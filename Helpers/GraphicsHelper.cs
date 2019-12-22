@@ -1,10 +1,10 @@
-﻿using System;
+﻿using DiscordBot.Services;
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using static DiscordBot.Services.UserService;
 
 namespace DiscordBot.Helpers
 {

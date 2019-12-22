@@ -31,7 +31,10 @@ namespace DiscordBot.Handlers
             _client.MessageReceived += MessageReceivedAsync;
         }
 
-        public async Task InitializeAsync() => await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+        public async Task InitializeAsync()
+        {
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+        }
 
         private static async Task MessageReceivedAsync(SocketMessage rawMessage)
         {
@@ -99,7 +102,12 @@ namespace DiscordBot.Handlers
                 }
 
                 if ((user.Level < 20 && user.Level % 4 == 0) || user.Level >= 20)
-                    await message.Channel.SendFileAsync(user.DrawLevelUpImage(), "levelup.png");
+                {
+                    using (var image = user.DrawLevelUpImage())
+                    {
+                        await message.Channel.SendFileAsync(image, "levelup.png");
+                    }
+                }
 
                 Logger.Information("Level up for {name}({uid}), new level -> {newlevel}", message.Author.Username, message.Author.Id, user.Level);
             }

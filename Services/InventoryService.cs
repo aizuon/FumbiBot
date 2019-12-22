@@ -9,13 +9,15 @@ namespace DiscordBot.Services
 {
     public static class InventoryService
     {
-        private static IDbConnection _connection => Database.GetCurrentConnection();
-
         public static async Task<Inventory> FindInventory(ulong uid)
         {
-            var inventory = (await _connection.FindAsync<Inventory>(statement => statement
-                .Where($"{nameof(Inventory.Uid):C} = @Uid")
-                .WithParameters(new { Uid = uid }))).FirstOrDefault();
+            Inventory inventory;
+            using (var db = Database.Open())
+            {
+                inventory = (await db.FindAsync<Inventory>(statement => statement
+                    .Where($"{nameof(Inventory.Uid):C} = @Uid")
+                    .WithParameters(new { Uid = uid }))).FirstOrDefault();
+            }
 
             if (inventory == null)
                 inventory = await CreateAndInsertNewInventoryAsync(uid);
@@ -38,11 +40,16 @@ namespace DiscordBot.Services
                 Pug = 0
             };
 
-            await _connection.InsertAsync(newInventory);
+            using (var db = Database.Open())
+                await db.InsertAsync(newInventory);
             return newInventory;
         }
 
-        public static async Task<bool> UpdateInventoryAsync(Inventory inventory) => await _connection.UpdateAsync(inventory);
+        public static async Task UpdateInventoryAsync(Inventory inventory)
+        {
+            using (var db = Database.Open())
+                await db.UpdateAsync(inventory);
+        }
 
         public static bool CheckInventory(Shop.ProfileTheme theme, Inventory inventory)
         {

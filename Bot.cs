@@ -62,8 +62,11 @@ namespace DiscordBot
 
             Logger.Information("Checking roles for {guildName}...", g.Name);
 
-            var db = Database.GetCurrentConnection();
-            var dbusers = (await db.FindAsync<User>()).ToList();
+            List<User> dbusers;
+
+            using (var db = Database.Open())
+                dbusers = (await db.FindAsync<User>()).ToList();
+
             var users = g.Users.ToList();
 
             foreach (var u in users)
@@ -177,7 +180,10 @@ namespace DiscordBot
             }
         }
 
-        public static void Stop() => StopAsync().GetAwaiter().GetResult();
+        public static void Stop()
+        {
+            StopAsync().GetAwaiter().GetResult();
+        }
 
         private static async Task StopAsync()
         {
@@ -187,10 +193,13 @@ namespace DiscordBot
             _client.Dispose();
         }
 
-        private static ServiceProvider ConfigureServices() => new ServiceCollection()
+        private static ServiceProvider ConfigureServices()
+        {
+            return new ServiceCollection()
                 .AddSingleton(new DiscordSocketClient(new DiscordSocketConfig { LogLevel = LogSeverity.Info, MessageCacheSize = 0 }))
                 .AddSingleton(new CommandService(new CommandServiceConfig { CaseSensitiveCommands = false, DefaultRunMode = RunMode.Async, LogLevel = LogSeverity.Verbose, ThrowOnError = false, IgnoreExtraArgs = false }))
                 .AddSingleton<CommandHandler>()
                 .BuildServiceProvider();
+        }
     }
 }

@@ -27,16 +27,34 @@ namespace DiscordBot
 
         public string DailyExp { get; set; }
 
-        public MemoryStream DrawLevelUpImage() => GraphicsHelper.DrawLevelUpImage(Level, Name, ProfileTheme);
+        public MemoryStream DrawLevelUpImage()
+        {
+            return GraphicsHelper.DrawLevelUpImage(Level, Name, ProfileTheme);
+        }
 
-        public async Task<MemoryStream> DrawProfileImageAsync(uint rank, string avatarUrl) => await GraphicsHelper.DrawProfileImageAsync(Level, Name, Exp, Pen, rank, ProfileTheme, UserService.CalculateExpBar(Level, Exp), avatarUrl);
+        public async Task<MemoryStream> DrawProfileImageAsync(uint rank, string avatarUrl)
+        {
+            return await GraphicsHelper.DrawProfileImageAsync(Level, Name, Exp, Pen, rank, ProfileTheme, UserService.CalculateExpBar(Level, Exp), avatarUrl);
+        }
 
-        public async Task<MemoryStream> DrawRankImageAsync(uint rank, string avatarUrl) => await GraphicsHelper.DrawRankImageAsync(Level, Name, rank, ProfileTheme, UserService.CalculateExpBar(Level, Exp), avatarUrl);
+        public async Task<MemoryStream> DrawRankImageAsync(uint rank, string avatarUrl)
+        {
+            return await GraphicsHelper.DrawRankImageAsync(Level, Name, rank, ProfileTheme, UserService.CalculateExpBar(Level, Exp), avatarUrl);
+        }
 
-        public MemoryStream DrawDailyImage(uint penGain) => GraphicsHelper.DrawDailyImage(penGain);
+        public MemoryStream DrawDailyImage(uint penGain)
+        {
+            return GraphicsHelper.DrawDailyImage(penGain);
+        }
 
-        public async Task<bool> MessageRecievedAsync(uint length, string name) => await UserService.MessageRecievedAsync(length, name, this);
+        public async Task<bool> MessageRecievedAsync(uint length, string name)
+        {
+            return await UserService.MessageRecievedAsync(length, name, this);
+        }
 
-        public async Task<bool> UpdateUserAsync() => await UserService.UpdateUserAsync(this);
+        public async Task UpdateUserAsync()
+        {
+            await UserService.UpdateUserAsync(this);
+        }
     }
 }

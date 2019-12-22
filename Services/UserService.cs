@@ -7,15 +7,24 @@ using System.Threading.Tasks;
 
 namespace DiscordBot.Services
 {
+    public struct ExpBar
+    {
+        public float Percentage { get; set; }
+        public uint CurrentExp { get; set; }
+        public uint NextLevelExp { get; set; }
+    }
+
     public static class UserService
     {
-        private static IDbConnection _connection => Database.GetCurrentConnection();
-
         public static async Task<User> FindUserAsync(ulong uid, string name)
         {
-            var user = (await _connection.FindAsync<User>(statement => statement
-                .Where($"{nameof(User.Uid):C} = @Uid")
-                .WithParameters(new { Uid = uid }))).FirstOrDefault();
+            User user;
+            using (var db = Database.Open())
+            {
+                user = (await db.FindAsync<User>(statement => statement
+                    .Where($"{nameof(User.Uid):C} = @Uid")
+                    .WithParameters(new { Uid = uid }))).FirstOrDefault();
+            }
 
             if (user == null)
                 user = await CreateAndInsertNewUserAsync(uid, name);
@@ -39,22 +48,35 @@ namespace DiscordBot.Services
             if (!name.All(char.IsLetterOrDigit))
                 newUser.Name = "invalid name";
 
-            await _connection.InsertAsync(newUser);
+            using (var db = Database.Open())
+                await db.InsertAsync(newUser);
             return newUser;
         }
 
-        public static async Task<bool> UpdateUserAsync(User user) => await _connection.UpdateAsync(user);
+        public static async Task UpdateUserAsync(User user)
+        {
+            using (var db = Database.Open())
+                await db.UpdateAsync(user);
+        }
 
         public static async Task<uint> CalculateRankAsync(ulong uid)
         {
-            var users = (await _connection.FindAsync<User>()).ToList();
+            List<User> users;
+            using (var db = Database.Open())
+            {
+                users = (await db.FindAsync<User>()).ToList();
+            }
             var rankList = users.OrderByDescending(i => i.Exp).ToList();
             return (uint)rankList.FindIndex(i => i.Uid == uid) + 1;
         }
 
         public static async Task<List<User>> GetTopListAsync()
         {
-            var users = (await _connection.FindAsync<User>()).ToList();
+            List<User> users;
+            using (var db = Database.Open())
+            {
+                users = (await db.FindAsync<User>()).ToList();
+            }
             var rankList = users.OrderByDescending(i => i.Exp).ToList();
             return rankList;
         }
@@ -175,13 +197,6 @@ namespace DiscordBot.Services
             Level78 = 5136900,
             Level79 = 5400700,
             Level80 = 5664500
-        }
-
-        public struct ExpBar
-        {
-            public float Percentage { get; set; }
-            public uint CurrentExp { get; set; }
-            public uint NextLevelExp { get; set; }
         }
 
         public static ExpBar CalculateExpBar(byte level, uint exp)

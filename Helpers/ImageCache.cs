@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Drawing;
 using System.IO;
 
@@ -34,8 +33,6 @@ namespace DiscordBot.Helpers
                 image.Value.Dispose();
 
             ImageStore.Clear();
-
-            GC.Collect();
         }
     }
 }
