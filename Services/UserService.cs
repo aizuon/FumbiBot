@@ -45,8 +45,8 @@ namespace DiscordBot.Services
                 LastDaily = null
             };
 
-            if (!name.All(char.IsLetterOrDigit))
-                newUser.Name = "invalid name";
+            //if (!name.All(char.IsLetterOrDigit))
+            //    newUser.Name = "invalid name";
 
             using (var db = Database.Open())
                 await db.InsertAsync(newUser);
@@ -297,11 +297,11 @@ namespace DiscordBot.Services
 
         public static void UpdateUsername(string name, User user)
         {
-            if (!name.All(char.IsLetterOrDigit))
-            {
-                user.Name = "invalid name";
-                return;
-            }
+            //if (!name.All(char.IsLetterOrDigit))
+            //{
+            //    user.Name = "invalid name";
+            //    return;
+            //}
 
             user.Name = name;
         }

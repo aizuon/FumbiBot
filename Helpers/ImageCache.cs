@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Drawing;
-using System.IO;
 
 namespace DiscordBot.Helpers
 {
@@ -18,13 +17,10 @@ namespace DiscordBot.Helpers
 
         private static Image CacheImageFromDisk(string path)
         {
-            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                var image = Image.FromStream(fs);
-                ImageStore.TryAdd(path, image);
+            var image = Image.FromFile(path);
+            ImageStore.TryAdd(path, image);
 
-                return image;
-            }
+            return image;
         }
 
         public static void Dispose()

@@ -8,7 +8,7 @@ namespace DiscordBot
     {
         static Program()
         {
-            AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
+            Console.CancelKeyPress += OnCancelKeyPress;
 
             Log.Logger = new LoggerConfiguration().MinimumLevel.Verbose()
                 .WriteTo.Async(w => w.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3} {SourceContext}] {Message:lj}{NewLine}{Exception}"), bufferSize: 1000, blockWhenFull: true)
@@ -22,7 +22,13 @@ namespace DiscordBot
             Bot.Start(Config.Instance.BotToken);
         }
 
-        private static void OnProcessExit(object sender, EventArgs e)
+        private static void OnCancelKeyPress(object sender, ConsoleCancelEventArgs e)
+        {
+            Exit();
+            Environment.Exit(0);
+        }
+
+        private static void Exit()
         {
             Bot.Stop();
 

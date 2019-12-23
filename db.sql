@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS `inventory` (
   `Pug` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `Hitler` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `Hitler2` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `GlitchAnim` tinyint(3) unsigned NOT NULL DEFAULT 0,
   UNIQUE KEY `Uid` (`Uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

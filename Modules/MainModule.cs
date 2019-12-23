@@ -30,9 +30,12 @@ namespace DiscordBot.Modules
 
             var user = await UserService.FindUserAsync(Context.User.Id, Context.User.Username);
 
+
             using (var image = await user.DrawProfileImageAsync(await UserService.CalculateRankAsync(Context.User.Id), Context.User.GetAvatarUrl()))
             {
-                await Context.Channel.SendFileAsync(image, "profile.png");
+                string extension = image.Length < 1000000 ? ".png" : ".gif";
+
+                await Context.Channel.SendFileAsync(image, "profile" + extension);
             }
         }
 
@@ -52,7 +55,9 @@ namespace DiscordBot.Modules
 
             using (var image = await user.DrawProfileImageAsync(await UserService.CalculateRankAsync(mention.Id), mention.GetAvatarUrl()))
             {
-                await Context.Channel.SendFileAsync(image, "profile.png");
+                string extension = image.Length < 1000000 ? ".png" : ".gif";
+
+                await Context.Channel.SendFileAsync(image, "profile" + extension);
             }
         }
 
@@ -61,6 +66,7 @@ namespace DiscordBot.Modules
         [Cooldown]
         public async Task AvatarCommand()
         {
+            string avatar = Context.User.GetAvatarUrl(ImageFormat.Auto, 1024);
             if (Context.User.GetAvatarUrl() == null)
             {
                 await ReplyAsync("Please set up an avatar first.");
@@ -68,7 +74,12 @@ namespace DiscordBot.Modules
                 return;
             }
 
-            await Context.Channel.SendFileAsync(await GraphicsHelper.GetAvatarStreamAsync(Context.User.GetAvatarUrl(ImageFormat.Auto, 1024)), "avatar.png");
+            string extension = avatar.Substring(avatar.Length - 4);
+
+            using (var image = await GraphicsHelper.GetAvatarStreamAsync(avatar))
+            {
+                await Context.Channel.SendFileAsync(image, "avatar" + extension);
+            }
         }
 
         [Command("avatar")]
@@ -76,14 +87,20 @@ namespace DiscordBot.Modules
         [Cooldown]
         public async Task AvatarCommand(IUser mention)
         {
-            if (mention.GetAvatarUrl() == null)
+            string avatar = mention.GetAvatarUrl(ImageFormat.Auto, 1024);
+            if (avatar == null)
             {
                 await ReplyAsync("User does not have an avatar.");
                 Logger.Information("H!avatar used by {name}({uid}) with empty avatar(mentioned)", Context.User.Username, Context.User.Id);
                 return;
             }
 
-            await Context.Channel.SendFileAsync(await GraphicsHelper.GetAvatarStreamAsync(mention.GetAvatarUrl(ImageFormat.Auto, 512)), "avatar.png");
+            string extension = avatar.Substring(avatar.Length - 4);
+
+            using (var image = await GraphicsHelper.GetAvatarStreamAsync(avatar))
+            {
+                await Context.Channel.SendFileAsync(image, "avatar" + extension);
+            }
         }
 
         [Command("rank")]
@@ -102,7 +119,9 @@ namespace DiscordBot.Modules
 
             using (var image = await user.DrawRankImageAsync(await UserService.CalculateRankAsync(Context.User.Id), Context.User.GetAvatarUrl()))
             {
-                await Context.Channel.SendFileAsync(image, "rank.png");
+                string extension = image.Length < 700000 ? ".png" : ".gif";
+
+                await Context.Channel.SendFileAsync(image, "rank" + extension);
             }
         }
 
@@ -122,7 +141,9 @@ namespace DiscordBot.Modules
 
             using (var image = await user.DrawRankImageAsync(await UserService.CalculateRankAsync(mention.Id), mention.GetAvatarUrl()))
             {
-                await Context.Channel.SendFileAsync(image, "rank.png");
+                string extension = image.Length < 700000 ? ".png" : ".gif";
+
+                await Context.Channel.SendFileAsync(image, "rank" + extension);
             }
         }
 

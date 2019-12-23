@@ -105,7 +105,9 @@ namespace DiscordBot.Handlers
                 {
                     using (var image = user.DrawLevelUpImage())
                     {
-                        await message.Channel.SendFileAsync(image, "levelup.png");
+                        string extension = image.Length < 700000 ? ".png" : ".gif";
+
+                        await message.Channel.SendFileAsync(image, "levelup" + extension);
                     }
                 }
 

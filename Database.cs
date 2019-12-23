@@ -18,7 +18,7 @@ namespace DiscordBot
             string database = Config.Instance.Database.Database;
             string uid = Config.Instance.Database.Username;
             string password = Config.Instance.Database.Password;
-            s_connectionString = "SERVER=" + server + ";" + "DATABASE=" + database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
+            s_connectionString = $"SslMode=none;Server={server};Database={database};Uid={uid};Pwd={password};Pooling=true;";
 
             OrmConfiguration.DefaultDialect = SqlDialect.MySql;
         }
