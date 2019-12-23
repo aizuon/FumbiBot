@@ -238,6 +238,9 @@
     <Content Include="resources\Rank9.png" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AnimatedGif">
+      <Version>1.0.5</Version>
+    </PackageReference>
     <PackageReference Include="BouncyCastle">
       <Version>1.8.5</Version>
     </PackageReference>

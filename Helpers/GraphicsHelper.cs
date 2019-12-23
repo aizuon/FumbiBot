@@ -1,7 +1,10 @@
-﻿using DiscordBot.Services;
+﻿using AnimatedGif;
+using DiscordBot.Services;
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Drawing.Text;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
@@ -11,7 +14,7 @@ namespace DiscordBot.Helpers
 {
     public static class GraphicsHelper
     {
-        public static MemoryStream DrawLevelUpImage(uint level, string name, byte theme)
+        public static async Task<MemoryStream> DrawLevelUpImage(uint level, string name, byte theme)
         {
             bool isAnimated = false;
 
@@ -27,7 +30,7 @@ namespace DiscordBot.Helpers
             var frames = new Bitmap[1];
             if (isAnimated)
             {
-                frameCount = (uint)image.GetFrameCount(FrameDimension.Time) / 4;
+                frameCount = (uint)image.GetFrameCount(FrameDimension.Time);
                 frames = new Bitmap[frameCount];
             }
 
@@ -35,7 +38,7 @@ namespace DiscordBot.Helpers
             {
                 for (uint i = 0; i < frameCount; i++)
                 {
-                    image.SelectActiveFrame(FrameDimension.Time, (int)(4 * i));
+                    image.SelectActiveFrame(FrameDimension.Time, (int)(i));
 
                     frames[i] = new Bitmap(285, 96);
 
@@ -53,7 +56,7 @@ namespace DiscordBot.Helpers
             if (!isAnimated)
                 return frames[0].ToStream();
 
-            return frames.ToStream();
+            return await frames.ToStream();
         }
 
         public static async Task<MemoryStream> DrawProfileImageAsync(uint level, string name, uint exp, ulong pen, uint rank, byte theme, ExpBar expBar, string avatarUrl)
@@ -74,7 +77,7 @@ namespace DiscordBot.Helpers
             var frames = new Bitmap[1];
             if (isAnimated)
             {
-                frameCount = (uint)image.GetFrameCount(FrameDimension.Time) / 4;
+                frameCount = (uint)image.GetFrameCount(FrameDimension.Time);
                 frames = new Bitmap[frameCount];
             }
 
@@ -84,7 +87,7 @@ namespace DiscordBot.Helpers
                 {
                     for (uint i = 0; i < frameCount; i++)
                     {
-                        image.SelectActiveFrame(FrameDimension.Time, (int)(4 * i));
+                        image.SelectActiveFrame(FrameDimension.Time, (int)(i));
 
                         frames[i] = new Bitmap(285, 192);
 
@@ -116,7 +119,7 @@ namespace DiscordBot.Helpers
             if (!isAnimated)
                 return frames[0].ToStream();
 
-            return frames.ToStream();
+            return await frames.ToStream();
         }
 
         public static async Task<MemoryStream> DrawRankImageAsync(uint level, string name, uint rank, byte theme, ExpBar expBar, string avatarUrl)
@@ -137,7 +140,7 @@ namespace DiscordBot.Helpers
             var frames = new Bitmap[1];
             if (isAnimated)
             {
-                frameCount = (uint)image.GetFrameCount(FrameDimension.Time) / 4;
+                frameCount = (uint)image.GetFrameCount(FrameDimension.Time);
                 frames = new Bitmap[frameCount];
             }
 
@@ -146,7 +149,7 @@ namespace DiscordBot.Helpers
             {
                 for (uint i = 0; i < frameCount; i++)
                 {
-                    image.SelectActiveFrame(FrameDimension.Time, (int)(4 * i));
+                    image.SelectActiveFrame(FrameDimension.Time, (int)(i));
 
                     frames[i] = new Bitmap(285, 96);
 
@@ -173,7 +176,7 @@ namespace DiscordBot.Helpers
             if (!isAnimated)
                 return frames[0].ToStream();
 
-            return frames.ToStream();
+            return await frames.ToStream();
         }
 
         public static MemoryStream DrawDailyImage(uint penGain)
@@ -229,82 +232,99 @@ namespace DiscordBot.Helpers
             return stream;
         }
 
-        private static MemoryStream ToStream(this Bitmap[] frames)
+        private static async Task<MemoryStream> ToStream(this Bitmap[] frames)
         {
-            const int PropertyTagFrameDelay = 0x5100;
-            const int PropertyTagLoopCount = 0x5101;
-            const short PropertyTagTypeLong = 4;
-            const short PropertyTagTypeShort = 3;
-
-            const int UintBytes = 4;
-
-            var gifEncoder = GetEncoder(ImageFormat.Gif);
-            var encoderParams1 = new EncoderParameters(1);
-            encoderParams1.Param[0] = new EncoderParameter(Encoder.SaveFlag, (long)EncoderValue.MultiFrame);
-            var encoderParamsN = new EncoderParameters(1);
-            encoderParamsN.Param[0] = new EncoderParameter(Encoder.SaveFlag, (long)EncoderValue.FrameDimensionTime);
-            var encoderParamsFlush = new EncoderParameters(1);
-            encoderParamsFlush.Param[0] = new EncoderParameter(Encoder.SaveFlag, (long)EncoderValue.Flush);
-
-            var frameDelay = (PropertyItem)FormatterServices.GetUninitializedObject(typeof(PropertyItem));
-            frameDelay.Id = PropertyTagFrameDelay;
-            frameDelay.Type = PropertyTagTypeLong;
-            frameDelay.Len = frames.Length * UintBytes;
-            frameDelay.Value = new byte[frames.Length * UintBytes];
-            byte[] frameDelayBytes = BitConverter.GetBytes((uint)0);
-            for (int j = 0; j < frames.Length; ++j)
-                Array.Copy(frameDelayBytes, 0, frameDelay.Value, j * UintBytes, UintBytes);
-
-            var loopPropertyItem = (PropertyItem)FormatterServices.GetUninitializedObject(typeof(PropertyItem));
-            loopPropertyItem.Id = PropertyTagLoopCount;
-            loopPropertyItem.Type = PropertyTagTypeShort;
-            loopPropertyItem.Len = 1;
-            loopPropertyItem.Value = BitConverter.GetBytes((ushort)0);
-
-            var stream = new MemoryStream();
-            bool first = true;
-            Bitmap firstBitmap = null;
-            foreach (var bitmap in frames)
+            var ms = new MemoryStream();
+            using (var gif = new AnimatedGifCreator(ms))
             {
-                if (first)
+                foreach (var image in frames)
                 {
-                    firstBitmap = bitmap;
-                    firstBitmap.SetPropertyItem(frameDelay);
-                    firstBitmap.SetPropertyItem(loopPropertyItem);
-                    firstBitmap.Save(stream, gifEncoder, encoderParams1);
-                    first = false;
-                }
-                else
-                {
-                    firstBitmap.SaveAdd(bitmap, encoderParamsN);
+                    await gif.AddFrameAsync(image);
                 }
             }
-            firstBitmap.SaveAdd(encoderParamsFlush);
 
-            encoderParams1.Dispose();
-            encoderParamsN.Dispose();
-            encoderParamsFlush.Dispose();
+            ms.Position = 0;
 
-            firstBitmap.Dispose();
-            foreach (var bitmap in frames)
-                bitmap.Dispose();
+            return ms;
 
-            stream.Position = 0;
+            //const int PropertyTagFrameDelay = 0x5100;
+            //const int PropertyTagLoopCount = 0x5101;
+            //const short PropertyTagTypeLong = 4;
+            //const short PropertyTagTypeShort = 3;
 
-            return stream;
+            //const int UintBytes = 4;
+
+            //var gifEncoder = GetEncoder(ImageFormat.Gif);
+            //var encoderParams1 = new EncoderParameters(5);
+            //encoderParams1.Param[0] = new EncoderParameter(Encoder.SaveFlag, (long)EncoderValue.MultiFrame);
+            //encoderParams1.Param[1] = new EncoderParameter(Encoder.Compression, (byte)EncoderValue.CompressionNone);
+            //encoderParams1.Param[2] = new EncoderParameter(Encoder.Quality, 100);
+            //encoderParams1.Param[3] = new EncoderParameter(Encoder.ScanMethod, (byte)EncoderValue.ScanMethodInterlaced);
+            //encoderParams1.Param[4] = new EncoderParameter(Encoder.RenderMethod, (byte)EncoderValue.RenderProgressive);
+            //var encoderParamsN = new EncoderParameters(1);
+            //encoderParamsN.Param[0] = new EncoderParameter(Encoder.SaveFlag, (long)EncoderValue.FrameDimensionTime);
+            //var encoderParamsFlush = new EncoderParameters(1);
+            //encoderParamsFlush.Param[0] = new EncoderParameter(Encoder.SaveFlag, (long)EncoderValue.Flush);
+
+            //var frameDelay = (PropertyItem)FormatterServices.GetUninitializedObject(typeof(PropertyItem));
+            //frameDelay.Id = PropertyTagFrameDelay;
+            //frameDelay.Type = PropertyTagTypeLong;
+            //frameDelay.Len = frames.Length * UintBytes;
+            //frameDelay.Value = new byte[frames.Length * UintBytes];
+            //byte[] frameDelayBytes = BitConverter.GetBytes((uint)1);
+            //for (int j = 0; j < frames.Length; ++j)
+            //    Array.Copy(frameDelayBytes, 0, frameDelay.Value, j * UintBytes, UintBytes);
+
+            //var loopPropertyItem = (PropertyItem)FormatterServices.GetUninitializedObject(typeof(PropertyItem));
+            //loopPropertyItem.Id = PropertyTagLoopCount;
+            //loopPropertyItem.Type = PropertyTagTypeShort;
+            //loopPropertyItem.Len = 1;
+            //loopPropertyItem.Value = BitConverter.GetBytes((ushort)0);
+
+            //var stream = new MemoryStream();
+            //bool first = true;
+            //Bitmap firstBitmap = null;
+            //foreach (var bitmap in frames)
+            //{
+            //    if (first)
+            //    {
+            //        firstBitmap = bitmap;
+            //        firstBitmap.SetPropertyItem(frameDelay);
+            //        firstBitmap.SetPropertyItem(loopPropertyItem);
+            //        firstBitmap.Save(stream, gifEncoder, encoderParams1);
+            //        first = false;
+            //    }
+            //    else
+            //    {
+            //        firstBitmap.SaveAdd(bitmap, encoderParamsN);
+            //    }
+            //}
+            //firstBitmap.SaveAdd(encoderParamsFlush);
+
+            //encoderParams1.Dispose();
+            //encoderParamsN.Dispose();
+            //encoderParamsFlush.Dispose();
+
+            //firstBitmap.Dispose();
+            //foreach (var bitmap in frames)
+            //    bitmap.Dispose();
+
+            //stream.Position = 0;
+
+            //return stream;
         }
 
-        private static ImageCodecInfo GetEncoder(ImageFormat format)
-        {
-            var codecs = ImageCodecInfo.GetImageDecoders();
-            foreach (var codec in codecs)
-            {
-                if (codec.FormatID == format.Guid)
-                {
-                    return codec;
-                }
-            }
-            return null;
-        }
+        //private static ImageCodecInfo GetEncoder(ImageFormat format)
+        //{
+        //    var codecs = ImageCodecInfo.GetImageDecoders();
+        //    foreach (var codec in codecs)
+        //    {
+        //        if (codec.FormatID == format.Guid)
+        //        {
+        //            return codec;
+        //        }
+        //    }
+        //    return null;
+        //}
     }
 }

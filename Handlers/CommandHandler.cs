@@ -103,7 +103,7 @@ namespace DiscordBot.Handlers
 
                 if ((user.Level < 20 && user.Level % 4 == 0) || user.Level >= 20)
                 {
-                    using (var image = user.DrawLevelUpImage())
+                    using (var image = await user.DrawLevelUpImage())
                     {
                         string extension = image.Length < 700000 ? ".png" : ".gif";
 

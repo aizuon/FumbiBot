@@ -27,9 +27,9 @@ namespace DiscordBot
 
         public string DailyExp { get; set; }
 
-        public MemoryStream DrawLevelUpImage()
+        public async Task<MemoryStream> DrawLevelUpImage()
         {
-            return GraphicsHelper.DrawLevelUpImage(Level, Name, ProfileTheme);
+            return await GraphicsHelper.DrawLevelUpImage(Level, Name, ProfileTheme);
         }
 
         public async Task<MemoryStream> DrawProfileImageAsync(uint rank, string avatarUrl)
